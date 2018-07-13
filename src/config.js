@@ -7,12 +7,19 @@ const DEFAULT_CONFIG = {
   // 本地存储配置
   'local_storage': {
     // 存储方式  localStorage || cookie
-    'type': 'localStorage',
+    'type': 'cookie',
     // 存储名称
-    'name': ''
+    'name': '',
+    // 关闭存储功能
+    'disable': false,
+    // cookie存储时，采用安全的存储方式，即：
+    //当secure属性设置为true时，cookie只有在https协议下才能上传到服务器，而在http协议下是没法上传的，所以也不会被窃听
+    'secure_cookie': false,
+    // cookie存储时，跨主域名存储配置
+    'cross_subdomain_cookie': true,
+    // cookie方法存储时，配置保存过期时间
+    'cookie_expiration': 1000
   },
-  // cookie存储时，跨主域名存储配置
-  'cross_subdomain_cookie': false,
   // 初始化sdk时触发的方法
   'loaded': function() {},
   // 上报数据实现形式  ajax img

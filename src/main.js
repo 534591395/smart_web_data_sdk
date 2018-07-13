@@ -33,6 +33,7 @@ class SMART {
   _set_config(config) {
     if (_.isObject(config)) {
       _.extend(this['config'], config);
+      CONFIG.DEBUG = CONFIG.DEBUG || this._get_config('debug');
     }
   }
   /**
