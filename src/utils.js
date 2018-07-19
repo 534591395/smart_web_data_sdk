@@ -1,7 +1,9 @@
 import {
   CONFIG
 } from './config'
-import { isFunction } from 'util';
+
+import { Base64 } from 'js-base64'
+import sha1 from 'sha1'
 
 // 兼容单元测试环境
 let win;
@@ -106,8 +108,131 @@ const _ = {
       bool = true;
     }
     return bool;
+  },
+  base64Encode(str) {
+    return Base64.encode(str);
+  },
+  sha1(str) {
+    return sha1(str);
+  },
+  // 对象的字段值截取
+  truncate(obj, length) {
+    let ret;
+    if (typeof(obj) === 'string') {
+        ret = obj.slice(0, length);
+    } else if (_.isArray(obj)) {
+        ret = [];
+        _.each(obj, function(val) {
+            ret.push(_.truncate(val, length));
+        });
+    } else if (_.isObject(obj)) {
+        ret = {};
+        _.each(obj, function(val, key) {
+            ret[key] = _.truncate(val, length);
+        });
+    } else {
+        ret = obj;
+    }
+    return ret;
+  },
+  isNumber(obj) {
+    return Object.prototype.toString.call(obj) == '[object Number]';
+  },
+  HTTPBuildQuery(formdata, arg_separator) {
+    let use_val, use_key, tmp_arr = [];
+
+    if (_.isUndefined(arg_separator)) {
+        arg_separator = '&';
+    }
+
+    _.each(formdata, function(val, key) {
+        use_val = encodeURIComponent(val.toString());
+        use_key = encodeURIComponent(key);
+        tmp_arr[tmp_arr.length] = use_key + '=' + use_val;
+    });
+
+    return tmp_arr.join(arg_separator);
   }
 };
+
+// 发送数据
+_.sendRequest = function(url, type, data, callback) {
+  data['_'] = new Date().getTime().toString();
+  if (type === 'img') {
+    url += '?' + _.HTTPBuildQuery(data);
+    let img = document.createElement('img');
+    img.src = url;
+    img.width = 1;
+    img.height = 1;
+    if (_.isFunction(callback)) {
+        callback(0);
+    }
+    img.onload = function() {
+      this.onload = null;
+    };
+    img.onerror = function() {
+      this.onerror = null;
+    };
+    img.onabort = function() {
+      this.onabort = null;
+    };
+  } else if (type === 'get') {
+    url += '?' + _.HTTPBuildQuery(data);
+    _.ajax.get(url, callback);
+  } else if (type === 'post') {
+    _.ajax.get(url, data , callback); 
+  }
+};
+
+_.ajax = {
+    post: function(url, options, callback, timeout) {
+      var that = this;  
+      that.callback = callback || function(params) {};  
+      try {
+          var req = new XMLHttpRequest();
+          req.open('POST', url, true);
+          req.setRequestHeader("Content-type","application/json");
+          req.withCredentials = true;
+          req.ontimeout = function() {
+              that.callback({status: 0, error: true, message: 'request ' +url + ' time out'});
+          };
+          req.onreadystatechange = function () {
+              if (req.readyState === 4) {
+                  if (req.status === 200) {
+                      that.callback(_.JSONDecode(req.responseText));
+                  } else {
+                      var message = 'Bad HTTP status: ' + req.status + ' ' + req.statusText;
+                      that.callback({status: 0, error: true, message: message});
+                  }
+              }
+          };
+          req.timeout = timeout || 5000;
+          req.send(_.JSONEncode(options));
+      } catch (e) {}
+    },
+    get: function(url, callback) {
+      try {
+          var req = new XMLHttpRequest();
+          req.open('GET', url, true);
+          req.withCredentials = true;
+          req.onreadystatechange = function () {
+              if (req.readyState === 4) {
+                  if (req.status === 200) {
+                      if (callback) {
+                          callback(req.responseText);
+                      }
+                  } else {
+                      if (callback) {
+                          var message = 'Bad HTTP status: ' + req.status + ' ' + req.statusText;
+                          callback({status: 0, error: true, message: message});
+                      }
+                  }
+              }
+          };
+          req.send(null);
+      } catch (e) {}
+    }
+  };
 
 // uuid
 _.UUID = (function() {

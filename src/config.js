@@ -22,8 +22,8 @@ const DEFAULT_CONFIG = {
   },
   // 初始化sdk时触发的方法
   'loaded': function() {},
-  // 上报数据实现形式  ajax img
-  'get_type': 'img',
+  // 上报数据实现形式  post, get, img
+  'track_type': 'img',
   // 单页面应用配置
   'SPA': {
     // 是SPA配置

@@ -6,7 +6,7 @@ import {
   SYSTEM_EVENT_LIST
 } from './config'
 
-import {_, console} from './utils';
+import {_, console} from './utils'
 
 // 用户属性追踪
 import USER_TRACK from './user_track'
@@ -16,6 +16,7 @@ import EVENT_TRACK from './event_track'
 import LOCAL_STORAGE from './local_storage'
 // 单页面
 import SPA from './spa'
+import { url } from 'inspector';
 
 class SMART {
   /**
@@ -36,6 +37,8 @@ class SMART {
     this._loaded();
     // 设置设备凭证
     this._set_device_id();
+    // persistedTime 首次访问应用时间
+    this['local_storage'].register_once({'persistedTime': new Date().getTime()}, '');
   }
   /**
    * 设置配置
@@ -138,6 +141,29 @@ class SMART {
     if (!_.isUndefined(start_listen_timestamp)) {
       costTime = new Date().getTime() - start_listen_timestamp;
     }
+    // 上报数据
+    let data = {
+
+    };
+    // 上报数据对象字段截取
+    const truncateLength = this._get_config('truncateLength');
+    if (_.isNumber(truncateLength) && truncateLength > 0) {
+      data = _.truncate(data, truncateLength);
+    }
+    const callback_fn = (response) => {
+      callback(response, data);
+    };
+    const url = this._get_config('api_host') + '/track/';
+    const track_type = this._get_config('track_type');
+    if (track_type === 'img') {
+      url += 'track.gif';
+    }
+    _.sendRequest(
+      url, 
+      track_type, 
+      { data: _.base64Encode(_.JSONEncode(truncated_data)), token: this._get_config('token') }, 
+      callback_fn
+    );
   }
 }
 

@@ -48,7 +48,9 @@
     "echarts": "^4.0.2",
     "optimal-select": "^4.0.1",
     "react": "^16.4.0",
-    "react-dom": "^16.4.0"
+    "react-dom": "^16.4.0",
+    "js-base64": "^2.4.8",
+    "sha1": "^1.1.1"
   },
   "pre-commit": []
 }
