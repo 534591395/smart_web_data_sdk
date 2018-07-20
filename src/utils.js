@@ -4,12 +4,27 @@ import {
 
 import { Base64 } from 'js-base64'
 import sha1 from 'sha1'
+import device from 'current-device'
+import detector from './useragent'
 
 // 兼容单元测试环境
 let win;
 if (typeof(window) === 'undefined') {
     win = {
-      navigator: {}
+      navigator: {
+        userAgent: ''
+      },
+      location: {
+        pathname: '',
+        href: ''
+      },
+      document: {
+        
+      },
+      screen: {
+        width: '',
+        height: ''
+      }
     };
 } else {
     win = window;
@@ -152,6 +167,121 @@ const _ = {
     });
 
     return tmp_arr.join(arg_separator);
+  },
+  // 判断数组中是否包含某字符串
+  contains(array, str) {
+    let = -1;
+    if(this.isArray(array)) {
+      return k;
+    }
+    if(!array && !item) {
+      return k;
+    }
+    for(let i = 0; i < array.length; i += 1) {
+      if(this.isFunction(array[i].indexOf)) {
+        if (array[i].indexOf(item) > 0)  
+          return i;
+      }
+    }
+    return k;
+  },
+  // 删除左右两端的空格
+  trim(str){
+    if (!str) return; 
+　  return str.replace(/(^\s*)|(\s*$)/g, "");
+  },
+  // 验证yyyy-MM-dd日期格式
+  checkTime(timeString) {
+    const reg = /^(\d{4})-(\d{2})-(\d{2})$/;
+    if(timeString) {
+      if (!reg.test(timeString)){
+        return false;
+      } else {
+        return true;
+      }
+    } else {
+      return false;
+    }
+  }
+};
+
+// 客户端基本属性
+_.info = {
+  domain(referrer) {
+    const split = referrer.split('/');
+    if (split.length >= 3) {
+        return split[2];
+    }
+    return '';
+  },
+  // 设备型号
+  deviceModel() {
+    let deviceModel = '';
+    if(device.android()) {
+      const sss = win.navigator.userAgent.split(";");  
+      const i = _.contains(sss, "Build/");  
+      if (i > -1) {
+        deviceModel = sss[i].substring(0, sss[i].indexOf("Build/"));  
+      }
+    } else if(device.ios()) {
+      if(device.iphone()) {
+        deviceModel = 'iPhone';
+      }
+    }
+    return deviceModel;
+  },
+  properties() {
+    const windowsOs = {
+     '5.0': 'Win2000',
+     '5.1': 'WinXP',
+     '5.2': 'Win2003',
+     '6.0': 'WindowsVista',
+     '6.1': 'Win7',
+     '6.2': 'Win8',
+     '6.3': 'Win8.1',
+     '10.0': 'Win10' 
+    };
+    const devicePlatform = device.type;
+    const deviceModel = _.trim(this.deviceModel());
+    const isWindows = device.windows();
+    let deviceOsVersion = detector.os.name + ' ' +detector.os.fullVersion;
+    if(isWindows) {
+      if(windowsOs[detector.os.fullVersion]) {
+        deviceOsVersion = windowsOs[detector.os.fullVersion];
+      }
+    }
+    return {
+      // 设备型号
+      deviceModel: deviceModel,
+      // 操作系统
+      deviceOs: detector.os.name,
+      // 操作系统版本
+      deviceOsVersion: deviceOsVersion,
+      // 设备平台
+      devicePlatform: devicePlatform,
+      // 浏览器名称
+      browser: detector.browser.name,
+      // 浏览器版本
+      browserVersion: detector.browser.fullVersion,
+      // 页面标题
+      title: win.document.title || '',
+      // 页面路径
+      urlPath: win.location.pathname || '',
+      // 页面url
+      currentUrl: win.location.href,
+      // 域名
+      currentDomain: this.domain(win.location.href),
+      // referrer 数据来源
+      referrer: win.document.referrer,
+      // referrer 域名
+      referringDomain: this.domain(win.document.referrer),
+      // 本地语言
+      language: win.navigator.language || '',
+      // 客户端分辨率 width
+      screenWidth: win.screen.width,
+      // 客户端分辨率 height
+      screenHeight: win.screen.height
+    };
   }
 };
 

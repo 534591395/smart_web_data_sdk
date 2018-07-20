@@ -26,10 +26,10 @@ const DEFAULT_CONFIG = {
   'track_type': 'img',
   // 单页面应用配置
   'SPA': {
-    // 是SPA配置
+    // 开启SPA配置
     'is': false,
     // SPA 实现类型，hash || history
-    'type': 'hash'
+    'mode': 'hash'
   },
   // PV指标自动触发配置
   'pageview': true,
@@ -53,35 +53,57 @@ const SYSTEM_EVENT_TYPE = 'se';
 const BUSSINESS_EVENT_TYPE = 'be';
 
 // 系统事件列表
-const SYSTEM_EVENT_LIST = [
+const SYSTEM_EVENT_OBJECT = {
   // 会话开始事件
-  'smart_session_start',
+  'smart_session_start': {
+    'data_type': SYSTEM_EVENT_TYPE
+  },
   // 会话结束事件
-  'smart_session_close',
+  'smart_session_close': {
+    'data_type': SYSTEM_EVENT_TYPE
+  },
   // PV事件
-  'smart_pv',
+  'smart_pv': {
+    'data_type': SYSTEM_EVENT_TYPE
+  },
   // 广告点击事件
-  'smart_ad_click',
+  'smart_ad_click': {
+    'data_type': SYSTEM_EVENT_TYPE
+  },
   // 用户首次访问网站事件
-  'smart_activate',
+  'smart_activate': {
+    'data_type': SYSTEM_EVENT_TYPE
+  },
   // A/B 测试事件
-  'smart_abtest',
+  'smart_abtest': {
+    'data_type': SYSTEM_EVENT_TYPE
+  },
   // 异常错误事件
-  'smart_error',
+  'smart_error': {
+    'data_type': SYSTEM_EVENT_TYPE
+  },
   // 用户注册事件
-  'smart_u_signup',
+  'smart_u_signup': {
+    'data_type': SYSTEM_EVENT_TYPE
+  },
   // 用户登录事件
-  'smart_u_login',
+  'smart_u_login': {
+    'data_type': SYSTEM_EVENT_TYPE
+  },
   // 用户登出事件
-  'smart_u_logout',
+  'smart_u_logout': {
+    'data_type': SYSTEM_EVENT_TYPE
+  },
   // 用户属性设置事件
-  'smart_u_property'
-];
+  'smart_u_property': {
+    'data_type': SYSTEM_EVENT_TYPE
+  }
+};
 
 export default {
   CONFIG,
   DEFAULT_CONFIG,
   SYSTEM_EVENT_TYPE,
   BUSSINESS_EVENT_TYPE,
-  SYSTEM_EVENT_LIST
+  SYSTEM_EVENT_OBJECT
 };

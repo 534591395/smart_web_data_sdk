@@ -3,7 +3,7 @@ import {
   DEFAULT_CONFIG,
   SYSTEM_EVENT_TYPE,
   BUSSINESS_EVENT_TYPE,
-  SYSTEM_EVENT_LIST
+  SYSTEM_EVENT_OBJECT
 } from './config'
 
 import {_, console} from './utils'
@@ -39,6 +39,17 @@ class SMART {
     this._set_device_id();
     // persistedTime 首次访问应用时间
     this['local_storage'].register_once({'persistedTime': new Date().getTime()}, '');
+    // 单页面
+    if (this._get_config('SPA').is) {
+      this._SPA();
+    }
+  }
+  // 单页面应用（影响PV）
+  _SPA() {
+    SPA.init({
+      mode: this._get_config('SPA').mode,
+      callback_fn: () => {}
+    });
   }
   /**
    * 设置配置
@@ -89,7 +100,7 @@ class SMART {
   }
   // 获取唯一凭证（设备标记）
   get_device_id() {
-    return get_property('deviceId');
+    return this.get_property('deviceId');
   }
   // 获取指定本地存储属性（缓存和本地）
   get_property(prop_name) {
@@ -112,12 +123,13 @@ class SMART {
   }
   /**
    * 追踪事件（上报用户事件触发数据）
-   * @param {String} event_name 事件名称
+   * @param {String} event_name 事件名称（必须）
    * @param {Object} properties 事件属性
    * @param {Function} callback 上报后的回调方法
+   * @param {String} event_type 自定义事件类型
    * @returns {Object} track_data 上报的数据
    */
-  track(event_name, properties, callback) {
+  track(event_name, properties, callback, event_type) {
     if (_.isUndefined(event_name)) {
       console.error('上报数据需要一个事件名称');
       return;
@@ -141,10 +153,48 @@ class SMART {
     if (!_.isUndefined(start_listen_timestamp)) {
       costTime = new Date().getTime() - start_listen_timestamp;
     }
+    // 事件类型设置
+    let data_type = BUSSINESS_EVENT_TYPE;
+    // 事件类型设置为传入了自定义事件类型
+    if (event_type) {
+      data_type = event_type;
+    } else
+    // 如果是内置事件,事件类型重新设置
+    if (SYSTEM_EVENT_OBJECT[event_name]) {
+      data_type = SYSTEM_EVENT_OBJECT[event_name].data_type;
+    }
+
+    // 事件触发时间
+    let time = new Date().getTime();
+    // 会话有时间差
+    // 触发的事件若是会话结束，触发时间要重新设置
+    if (event_name === 'smart_session_close') {
+      
+    }
+    
     // 上报数据
     let data = {
-
+      dataType: data_type,
+      userId: this.get_property('user_id'),
+      // sdk类型 （js，小程序、安卓、IOS、server、pc）
+      sdkType: 'js',
+      sdkVersion: CONFIG.LIB_VERSION,
+      // 事件名称
+      eventId: event_name,
+      // 事件触发时间
+      time: time,
+      // 用户首次访问时间
+      persistedTime: this.get_property('persistedTime'),
+      // 客户端唯一凭证(设备凭证)
+      deviceId: this.get_device_id(),
+      // 页面打开场景, 默认 web
+      pageOpenScene: 'web',
+      // 应用凭证
+      token: this._get_config('token')
     };
+    // 合并客户端信息
+    data = Object.assign({}, data, _.info.properties());
+
     // 上报数据对象字段截取
     const truncateLength = this._get_config('truncateLength');
     if (_.isNumber(truncateLength) && truncateLength > 0) {
