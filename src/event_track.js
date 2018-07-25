@@ -51,7 +51,24 @@ class EVENT_TRACK {
    * 关闭当前会话
    */
   _close_cur_session() {
-
+    /*
+     为了便于绘制用户事件发生轨迹图，区分会话close和最后一次事件触发时间的顺序，会话关闭时间需要做些微调
+     1. 如果本地拿到了上次（非会话事件）事件的触发时间，time = this.get_property('LASTEVENT').time + 1;
+     2. 如果未拿到，time = new Date().getTime() - 1;
+    */
+    let time = new Date().getTime() - 1;
+    const sessionStartTime = this.get_property('sessionStartTime');
+    const LASTEVENT = this.get_property('LASTEVENT');
+    if (LASTEVENT && LASTEVENT.time) {
+      time = LASTEVENT.time + 1;
+    }
+    const sessionTotalLength = time - sessionStartTime;
+    if (sessionTotalLength >= 0) {
+      this.track('smart_session_close', {
+      sessionCloseTime: time,
+      sessionTotalLength: sessionTotalLength
+    });
+   }
   }
   /**
    * 判断会话重新开启
@@ -160,9 +177,15 @@ class EVENT_TRACK {
     let time = new Date().getTime();
     // 会话有时间差
     // 触发的事件若是会话结束，触发时间要重新设置
+    // 若事件id为会话关闭，需要删除传入的自定义属性
     if (event_name === 'smart_session_close') {
-      
+      time = properties.sessionCloseTime;
+      delete user_set_properties['sessionCloseTime'];
+      delete user_set_properties['sessionTotalLength'];
     }
+
+    // 设置通用的事件属性
+    user_set_properties = _.extend({}, this.get_property('superProperties'), user_set_properties);
     
     // 上报数据
     let data = {
@@ -179,11 +202,15 @@ class EVENT_TRACK {
       persistedTime: this.get_property('persistedTime'),
       // 客户端唯一凭证(设备凭证)
       deviceId: this.get_device_id(),
-      // 页面打开场景, 默认 web
-      pageOpenScene: 'web',
+      // 页面打开场景, 默认 Browser
+      pageOpenScene: 'Browser',
       // 应用凭证
       token: this._get_config('token'),
-      costTime: costTime
+      costTime: costTime,
+      // 当前关闭的会话时长
+      sessionTotalLength: properties.sessionTotalLength,
+      // 事件自定义属性
+      attributes: user_set_properties
     };
     // 合并客户端信息
     data = Object.assign({}, data, _.info.properties());
@@ -207,6 +234,16 @@ class EVENT_TRACK {
       { data: _.base64Encode(_.JSONEncode(truncated_data)), token: this._get_config('token') }, 
       callback_fn
     );
+
+    // 保存最后一次用户触发事件（除了会话事件以外）的事件id以及时间，通过这个时间确定会话关闭时的时间
+    if (['smart_session_start', 'smart_session_close'].indexOf(event_name) === -1) {
+      this['local_storage'].register({
+        LASTEVENT: {
+          eventId: event_name,
+          time: time
+        }
+      });
+    }
   }
 }
 

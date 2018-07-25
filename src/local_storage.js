@@ -137,7 +137,7 @@ class LOCAL_STORAGE {
   }
   /**
    * 只缓存一次指定的数据，下次设置该数据时不会覆盖前一次数据
-   * 若想更新已设置的属性值，那么default_value参数值要等于本地缓存数据中需重置的属性的值
+   * 若想更新已设置的属性值，那么default_value参数值要等于本地缓存数据中需重置的属性的值(默认值)
    * this['props'][prop] === default_value   prop为需更新的属性
    * @param {Object} props
    * @param {*} default_value

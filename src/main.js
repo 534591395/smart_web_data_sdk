@@ -1,9 +1,6 @@
 import {
   CONFIG,
-  DEFAULT_CONFIG,
-  SYSTEM_EVENT_TYPE,
-  BUSSINESS_EVENT_TYPE,
-  SYSTEM_EVENT_OBJECT
+  DEFAULT_CONFIG
 } from './config'
 
 import {_, console} from './utils'
@@ -32,6 +29,8 @@ class SMART {
     this._loaded();
     // 实例化事件对象
     this['event'] = new EVENT_TRACK(this);
+    // 实例化用户对象
+    this['user'] = new USER_TRACK();
     // 设置设备凭证
     this._set_device_id();
     // persistedTime 首次访问应用时间
@@ -120,6 +119,77 @@ class SMART {
    */
   track_event(event_name, properties, callback, event_type) {
     this['event'].track(event_name, properties, callback, event_type);
+  }
+  /**
+   * 设置事件自定义通用属性
+   * 成功设置事件通用属性后，再通过 track_event: 追踪事件时，事件通用属性会被添加进每个事件中。
+   * 重复调用 register_event_super_properties: 会覆盖之前已设置的通用属性。
+   */
+  register_event_super_properties(prop, to) {
+    let set_props = {};
+    let super_properties = this.get_property('superProperties');
+    if (_.isObject(prop)) {
+      _.each(prop, (v ,k) => {
+        set_props[k] = v;
+      });
+    } else {
+      set_props[prop] = to;
+    }
+    // 注意合并顺序
+    super_properties = _.extend({}, super_properties, set_props);
+    this['local_storage'].register({
+      superProperties: super_properties
+    });
+  }
+  /**
+   * 设置事件自定义通用属性
+   * 成功设置事件通用属性后，再通过 track_event: 追踪事件时，事件通用属性会被添加进每个事件中。
+   * 不覆盖之前已经设定的通用属性。
+   */
+  register_event_super_properties_once(prop, to) {
+    let set_props = {};
+    let super_properties = this.get_property('superProperties');
+    if (_.isObject(prop)) {
+      _.each(prop, (v ,k) => {
+        set_props[k] = v;
+      });
+    } else {
+      set_props[prop] = to;
+    }
+    // 注意合并顺序
+    super_properties = _.extend({}, set_props, super_properties);
+    this['local_storage'].register({
+      superProperties: super_properties
+    });
+  }
+  /**
+   * 删除指定通用事件属性
+   * @param {String} prop_name 
+   */
+  unregister_event_super_properties(prop_name) {
+    if (_.isString(prop_name)) {
+      let super_properties = this.get_property('superProperties');
+      if (_.isObject(super_properties)) {
+        delete super_properties[prop_name];
+        this['local_storage'].register({
+          superProperties: super_properties
+        });
+      }
+    }
+  }
+  /**
+   * 清除本地已设置的通用事件属性
+   */
+  clear_event_super_properties() {
+    this['local_storage'].register({
+      superProperties: {}
+    });
+  }
+  /**
+   * 查看当前已设置的通用事件属性
+   */
+  current_event_super_properties() {
+    return this.get_property('superProperties');
   }
 }
 

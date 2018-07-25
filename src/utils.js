@@ -153,6 +153,9 @@ const _ = {
   isNumber(obj) {
     return Object.prototype.toString.call(obj) == '[object Number]';
   },
+  isString(str) {
+    return Object.prototype.toString.call(str) == '[object String]';
+  },
   HTTPBuildQuery(formdata, arg_separator) {
     let use_val, use_key, tmp_arr = [];
 
