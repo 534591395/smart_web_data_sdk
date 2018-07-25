@@ -21,12 +21,24 @@ class EVENT_TRACK {
       updatedTime: 0,
       sessionStartTime: 0
     });
+    // 将当前的referrer保存到本地缓存
+    this['local_storage'].register({
+      sessionReferrer: window.document.referrer
+    });
   }
   /**
-   * TODO
+   *
    * 判断是否为其它渠道
    */
-  _check_referer() {}
+  _check_channel() {
+    const referrer = this.get_property('sessionReferrer');
+    let is_other_channel = false;
+    // 若本地缓存的referrer 的host跟当前页不一样，那么可以确定是其它渠道进来的
+    if (_.getHost(referrer) !== window.location.host) {
+      is_other_channel = true;
+    }
+    return is_other_channel;
+  }
   /**
    * TODO
    * 判断指定事件是否被禁止上报
@@ -75,20 +87,20 @@ class EVENT_TRACK {
    * 判断条件：会话首次开始、指定的一段时间内用户无事件操作、其它渠道进来
   */
   _session(callback) {
-    const sessionStartTime = 1 * this.get_property('sessionStartTime') / 1000;
-    const updatedTime = 1 * this.get_property('updatedTime') / 1000;
-    const nowDateTimeMs = new Date().getTime();
-    const nowDateTimeSe = 1 * nowDateTimeMs / 1000;
+    const session_start_time = 1 * this.get_property('sessionStartTime') / 1000;
+    const updated_time = 1 * this.get_property('updatedTime') / 1000;
+    const now_date_time_ms = new Date().getTime();
+    const now_date_time_se = 1 * now_date_time_ms / 1000;
     // 其它渠道判断
-    const otherWBool = !this._check_referer();
+    const other_channel_Bool = this._check_channel();
     //会话结束判断
     if (
-      sessionStartTime === 0 ||
-      nowDateTimeSe > updatedTime + 60 * this._get_config('session_interval_mins') ||
-      otherWBool
+      session_start_time === 0 ||
+      now_date_time_se > updated_time + 60 * this._get_config('session_interval_mins') ||
+      other_channel_Bool
     ) {
       // 当会话首次开始时，不用发送会话关闭事件
-      if (sessionStartTime === 0) {
+      if (session_start_time === 0) {
         // 新打开一个会话
         this._start_new_session();
       } else {
@@ -98,7 +110,7 @@ class EVENT_TRACK {
     }
     // 更新本地的最后事件操作时间
     this['local_storage'].register({
-      updatedTime: nowDateTimeMs
+      updatedTime: now_date_time_ms
     });
     // 执行回调方法
     if (_.isFunction(callback)) {
@@ -214,6 +226,35 @@ class EVENT_TRACK {
     };
     // 合并客户端信息
     data = Object.assign({}, data, _.info.properties());
+
+    //只有已访问页面后，sessionReferrer 重置
+    //如果不是内置事件，那么 sessionReferrer 重置
+    //如果是'da_activate'，那么 sessionReferrer 重置
+    //解决referrer 当是外链时，此时触发自定义事件，引起重启一个session问题。
+    if(data_type === BUSSINESS_EVENT_TYPE) {
+      // 其它渠道
+      if(this._check_channel()) {
+        this['local_storage'].register({
+            sessionReferrer: document.location.href
+        });
+      }
+    }
+    if(!this._get_config('SPA').is) {
+      if( ['smart_activate','smart_session_close'].indexOf(event_name) > 0 ) {
+        this['local_storage'].register({
+            sessionReferrer: document.location.href
+        });
+      }
+    }
+
+    // 当启动单页面后，切换页面，refer为空，此时做处理
+    if (this._get_config('SPA').is) {
+      const sessionReferrer = this.get_property('sessionReferrer');
+      if (sessionReferrer !== data['referrer']) {
+        data['referrer'] = sessionReferrer;
+        data['referringDomain'] = _.info.domain(sessionReferrer);
+      }
+    }
 
     // 上报数据对象字段截取
     const truncateLength = this._get_config('truncateLength');

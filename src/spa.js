@@ -61,6 +61,7 @@ const SPA = {
       if(this.config.mode === 'hash') {
         if(_.isFunction(this.config.callback_fn)) {
           this.config.callback_fn.call();
+          _.innerEvent.trigger('singlePage:change');
         }
       } else if( this.config.mode === 'history' ) {
         const oldPath = this.path;
@@ -70,6 +71,7 @@ const SPA = {
           if(historyDidUpdate || this.config.track_replace_state) {
             if(typeof this.config.callback_fn === 'function') {
               this.config.callback_fn.call();
+              _.innerEvent.trigger('singlePage:change');
             }
           }
         }

@@ -205,6 +205,20 @@ const _ = {
     } else {
       return false;
     }
+  },
+  // 返回指定url的域名
+  // 若不传入url，返回当前网页的域名
+  getHost(url) {
+    let host = '';
+    if (!url) {
+      url = win.location.href;
+    }
+    const regex = /.*\:\/\/([^\/]*).*/;
+    const match = url.match(regex);
+    if (match) {
+      host = match[1];
+    }
+    return host;
   }
 };
 
@@ -285,6 +299,48 @@ _.info = {
       // 客户端分辨率 height
       screenHeight: win.screen.height
     };
+  }
+};
+
+// 消息订阅/推送
+_.innerEvent = {
+  /**
+   * 订阅
+   *  */ 
+  on: function(key, fn) {
+      if(!this._list) {
+          this._list = {};
+      }
+      if (!this._list[key]) {
+          this._list[key] = [];
+      }
+      this._list[key].push(fn);
+  },
+  off: function(key) {
+      if(!this._list) {
+          this._list = {};
+      }
+      if (!this._list[key]) {
+          return;
+      }else{
+          delete this._list[key];
+      }
+  },
+  /**
+   * 推送
+   */
+  trigger: function() {
+      var args = Array.prototype.slice.call(arguments);
+      var key = args[0];
+      var arrFn = this._list && this._list[key];
+      if (!arrFn || arrFn.length === 0) {
+          return;
+      }
+      for (var i = 0; i < arrFn.length; i++) {
+          if( typeof arrFn[i] == 'function') {
+              arrFn[i].apply(this, args);
+          }
+      }
   }
 };
 
