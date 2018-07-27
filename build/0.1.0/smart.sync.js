@@ -4,13 +4,13 @@
     // 默认配置
     const DEFAULT_CONFIG = {
       // 上报服务器域名配置
-      'api_host': 'localhost:3301',
+      'track_url': 'http://localhost:3300/',
       // debug启动配置
       'debug': false,
       // 本地存储配置
       'local_storage': {
         // 存储方式  localStorage || cookie
-        'type': 'cookie',
+        'type': 'localStorage',
         // 存储名称
         'name': '',
         // 关闭存储功能
@@ -108,11 +108,451 @@
     // People类属性事件id，全局唯一
     const PEOPLE_PROPERTY_ID = 'smart_user_property';
 
+    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
+      return typeof obj;
+    } : function (obj) {
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+    };
+
+    // Save the previous value of the device variable.
+    var previousDevice = window.device;
+
+    var device = {};
+
+    var changeOrientationList = [];
+
+    // Add device as a global object.
+    window.device = device;
+
+    // The <html> element.
+    var documentElement = window.document.documentElement;
+
+    // The client user agent string.
+    // Lowercase, so we can use the more efficient indexOf(), instead of Regex
+    var userAgent = window.navigator.userAgent.toLowerCase();
+
+    // Detectable television devices.
+    var television = ['googletv', 'viera', 'smarttv', 'internet.tv', 'netcast', 'nettv', 'appletv', 'boxee', 'kylo', 'roku', 'dlnadoc', 'roku', 'pov_tv', 'hbbtv', 'ce-html'];
+
+    // Main functions
+    // --------------
+
+    device.macos = function () {
+      return find('mac');
+    };
+
+    device.ios = function () {
+      return device.iphone() || device.ipod() || device.ipad();
+    };
+
+    device.iphone = function () {
+      return !device.windows() && find('iphone');
+    };
+
+    device.ipod = function () {
+      return find('ipod');
+    };
+
+    device.ipad = function () {
+      return find('ipad');
+    };
+
+    device.android = function () {
+      return !device.windows() && find('android');
+    };
+
+    device.androidPhone = function () {
+      return device.android() && find('mobile');
+    };
+
+    device.androidTablet = function () {
+      return device.android() && !find('mobile');
+    };
+
+    device.blackberry = function () {
+      return find('blackberry') || find('bb10') || find('rim');
+    };
+
+    device.blackberryPhone = function () {
+      return device.blackberry() && !find('tablet');
+    };
+
+    device.blackberryTablet = function () {
+      return device.blackberry() && find('tablet');
+    };
+
+    device.windows = function () {
+      return find('windows');
+    };
+
+    device.windowsPhone = function () {
+      return device.windows() && find('phone');
+    };
+
+    device.windowsTablet = function () {
+      return device.windows() && find('touch') && !device.windowsPhone();
+    };
+
+    device.fxos = function () {
+      return (find('(mobile') || find('(tablet')) && find(' rv:');
+    };
+
+    device.fxosPhone = function () {
+      return device.fxos() && find('mobile');
+    };
+
+    device.fxosTablet = function () {
+      return device.fxos() && find('tablet');
+    };
+
+    device.meego = function () {
+      return find('meego');
+    };
+
+    device.cordova = function () {
+      return window.cordova && location.protocol === 'file:';
+    };
+
+    device.nodeWebkit = function () {
+      return _typeof(window.process) === 'object';
+    };
+
+    device.mobile = function () {
+      return device.androidPhone() || device.iphone() || device.ipod() || device.windowsPhone() || device.blackberryPhone() || device.fxosPhone() || device.meego();
+    };
+
+    device.tablet = function () {
+      return device.ipad() || device.androidTablet() || device.blackberryTablet() || device.windowsTablet() || device.fxosTablet();
+    };
+
+    device.desktop = function () {
+      return !device.tablet() && !device.mobile();
+    };
+
+    device.television = function () {
+      var i = 0;
+      while (i < television.length) {
+        if (find(television[i])) {
+          return true;
+        }
+        i++;
+      }
+      return false;
+    };
+
+    device.portrait = function () {
+      if (screen.orientation && Object.prototype.hasOwnProperty.call(window, 'onorientationchange')) {
+        return screen.orientation.type.includes('portrait');
+      }
+      return window.innerHeight / window.innerWidth > 1;
+    };
+
+    device.landscape = function () {
+      if (screen.orientation && Object.prototype.hasOwnProperty.call(window, 'onorientationchange')) {
+        return screen.orientation.type.includes('landscape');
+      }
+      return window.innerHeight / window.innerWidth < 1;
+    };
+
+    // Public Utility Functions
+    // ------------------------
+
+    // Run device.js in noConflict mode,
+    // returning the device variable to its previous owner.
+    device.noConflict = function () {
+      window.device = previousDevice;
+      return this;
+    };
+
+    // Private Utility Functions
+    // -------------------------
+
+    // Simple UA string search
+    function find(needle) {
+      return userAgent.indexOf(needle) !== -1;
+    }
+
+    // Check if documentElement already has a given class.
+    function hasClass(className) {
+      return documentElement.className.match(new RegExp(className, 'i'));
+    }
+
+    // Add one or more CSS classes to the <html> element.
+    function addClass(className) {
+      var currentClassNames = null;
+      if (!hasClass(className)) {
+        currentClassNames = documentElement.className.replace(/^\s+|\s+$/g, '');
+        documentElement.className = currentClassNames + ' ' + className;
+      }
+    }
+
+    // Remove single CSS class from the <html> element.
+    function removeClass(className) {
+      if (hasClass(className)) {
+        documentElement.className = documentElement.className.replace(' ' + className, '');
+      }
+    }
+
+    // HTML Element Handling
+    // ---------------------
+
+    // Insert the appropriate CSS class based on the _user_agent.
+
+    if (device.ios()) {
+      if (device.ipad()) {
+        addClass('ios ipad tablet');
+      } else if (device.iphone()) {
+        addClass('ios iphone mobile');
+      } else if (device.ipod()) {
+        addClass('ios ipod mobile');
+      }
+    } else if (device.macos()) {
+      addClass('macos desktop');
+    } else if (device.android()) {
+      if (device.androidTablet()) {
+        addClass('android tablet');
+      } else {
+        addClass('android mobile');
+      }
+    } else if (device.blackberry()) {
+      if (device.blackberryTablet()) {
+        addClass('blackberry tablet');
+      } else {
+        addClass('blackberry mobile');
+      }
+    } else if (device.windows()) {
+      if (device.windowsTablet()) {
+        addClass('windows tablet');
+      } else if (device.windowsPhone()) {
+        addClass('windows mobile');
+      } else {
+        addClass('windows desktop');
+      }
+    } else if (device.fxos()) {
+      if (device.fxosTablet()) {
+        addClass('fxos tablet');
+      } else {
+        addClass('fxos mobile');
+      }
+    } else if (device.meego()) {
+      addClass('meego mobile');
+    } else if (device.nodeWebkit()) {
+      addClass('node-webkit');
+    } else if (device.television()) {
+      addClass('television');
+    } else if (device.desktop()) {
+      addClass('desktop');
+    }
+
+    if (device.cordova()) {
+      addClass('cordova');
+    }
+
+    // Orientation Handling
+    // --------------------
+
+    // Handle device orientation changes.
+    function handleOrientation() {
+      if (device.landscape()) {
+        removeClass('portrait');
+        addClass('landscape');
+        walkOnChangeOrientationList('landscape');
+      } else {
+        removeClass('landscape');
+        addClass('portrait');
+        walkOnChangeOrientationList('portrait');
+      }
+      setOrientationCache();
+    }
+
+    function walkOnChangeOrientationList(newOrientation) {
+      for (var index in changeOrientationList) {
+        changeOrientationList[index](newOrientation);
+      }
+    }
+
+    device.onChangeOrientation = function (cb) {
+      if (typeof cb == 'function') {
+        changeOrientationList.push(cb);
+      }
+    };
+
+    // Detect whether device supports orientationchange event,
+    // otherwise fall back to the resize event.
+    var orientationEvent = 'resize';
+    if (Object.prototype.hasOwnProperty.call(window, 'onorientationchange')) {
+      orientationEvent = 'orientationchange';
+    }
+
+    // Listen for changes in orientation.
+    if (window.addEventListener) {
+      window.addEventListener(orientationEvent, handleOrientation, false);
+    } else if (window.attachEvent) {
+      window.attachEvent(orientationEvent, handleOrientation);
+    } else {
+      window[orientationEvent] = handleOrientation;
+    }
+
+    handleOrientation();
+
+    // Public functions to get the current value of type, os, or orientation
+    // ---------------------------------------------------------------------
+
+    function findMatch(arr) {
+      for (var i = 0; i < arr.length; i++) {
+        if (device[arr[i]]()) {
+          return arr[i];
+        }
+      }
+      return 'unknown';
+    }
+
+    device.type = findMatch(['mobile', 'tablet', 'desktop']);
+    device.os = findMatch(['ios', 'iphone', 'ipad', 'ipod', 'android', 'blackberry', 'windows', 'fxos', 'meego', 'television']);
+
+    function setOrientationCache() {
+      device.orientation = findMatch(['portrait', 'landscape']);
+    }
+
+    setOrientationCache();
+
+    const utf8Encode = function (string) {
+      string = (string + '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
+
+      var utftext = '',
+          start,
+          end;
+      var stringl = 0,
+          n;
+
+      start = end = 0;
+      stringl = string.length;
+
+      for (n = 0; n < stringl; n++) {
+        var c1 = string.charCodeAt(n);
+        var enc = null;
+
+        if (c1 < 128) {
+          end++;
+        } else if (c1 > 127 && c1 < 2048) {
+          enc = String.fromCharCode(c1 >> 6 | 192, c1 & 63 | 128);
+        } else {
+          enc = String.fromCharCode(c1 >> 12 | 224, c1 >> 6 & 63 | 128, c1 & 63 | 128);
+        }
+        if (enc !== null) {
+          if (end > start) {
+            utftext += string.substring(start, end);
+          }
+          utftext += enc;
+          start = end = n + 1;
+        }
+      }
+
+      if (end > start) {
+        utftext += string.substring(start, string.length);
+      }
+
+      return utftext;
+    };
+
+    const base64Encode = function (data) {
+      var b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+      var o1,
+          o2,
+          o3,
+          h1,
+          h2,
+          h3,
+          h4,
+          bits,
+          i = 0,
+          ac = 0,
+          enc = '',
+          tmp_arr = [];
+
+      if (!data) {
+        return data;
+      }
+
+      data = utf8Encode(data);
+
+      do {
+        // pack three octets into four hexets
+        o1 = data.charCodeAt(i++);
+        o2 = data.charCodeAt(i++);
+        o3 = data.charCodeAt(i++);
+
+        bits = o1 << 16 | o2 << 8 | o3;
+
+        h1 = bits >> 18 & 0x3f;
+        h2 = bits >> 12 & 0x3f;
+        h3 = bits >> 6 & 0x3f;
+        h4 = bits & 0x3f;
+
+        // use hexets to index into b64, and append result to encoded string
+        tmp_arr[ac++] = b64.charAt(h1) + b64.charAt(h2) + b64.charAt(h3) + b64.charAt(h4);
+      } while (i < data.length);
+
+      enc = tmp_arr.join('');
+
+      switch (data.length % 3) {
+        case 1:
+          enc = enc.slice(0, -2) + '==';
+          break;
+        case 2:
+          enc = enc.slice(0, -1) + '=';
+          break;
+      }
+
+      return enc;
+    };
+
+    // 兼容单元测试环境
+    let win$1;
+    if (typeof window === 'undefined') {
+        win$1 = {
+            navigator: {
+                userAgent: ''
+            },
+            location: {
+                pathname: '',
+                href: ''
+            },
+            document: {},
+            screen: {
+                width: '',
+                height: ''
+            }
+        };
+    } else {
+        win$1 = window;
+    }
+
+    function toString(object) {
+        return Object.prototype.toString.call(object);
+    }
+
+    function isObject(object) {
+        return toString(object) === "[object Object]";
+    }
+
+    function isFunction(object) {
+        return toString(object) === "[object Function]";
+    }
+
+    function each(object, factory) {
+        for (var i = 0, l = object.length; i < l; i++) {
+            if (factory.call(object, object[i], i) === false) {
+                break;
+            }
+        }
+    }
+
     var NA_VERSION = "-1";
-    var external = win.external;
-    var userAgent = win.navigator.userAgent || "";
-    var appVersion = win.navigator.appVersion || "";
-    var vendor = win.navigator.vendor || "";
+    var external = win$1.external;
+    var userAgent$1 = win$1.navigator.userAgent || "";
+    var appVersion = win$1.navigator.appVersion || "";
+    var vendor = win$1.navigator.vendor || "";
     var detector = {};
 
     var re_msie = /\b(?:msie |ie |trident\/[0-9].*rv[ :])([0-9.]+)/;
@@ -244,7 +684,7 @@
     }]];
     //浏览器内核
     var ENGINE = [["edgehtml", /edge\/([0-9.]+)/], ["trident", re_msie], ["blink", function () {
-        return "chrome" in win && "CSS" in win && /\bapplewebkit[\/]?([0-9.+]+)/;
+        return "chrome" in win$1 && "CSS" in win$1 && /\bapplewebkit[\/]?([0-9.+]+)/;
     }], ["webkit", /\bapplewebkit[\/]?([0-9.+]+)/], ["gecko", function (ua) {
         var match;
         if (match = ua.match(/\brv:([\d\w.]+).*\bgecko\/(\d+)/)) {
@@ -403,7 +843,7 @@
             // 360SE 3.x ~ 5.x support.
             // 暴露的 external.twGetVersion 和 external.twGetSecurityID 均为 undefined。
             // 因此只能用 try/catch 而无法使用特性判断。
-            var security = external.twGetSecurityID(win);
+            var security = external.twGetSecurityID(win$1);
             var version = external.twGetVersion(security);
 
             if (runpath && runpath.indexOf(key) === -1) {
@@ -585,19 +1025,14 @@
         return d;
     };
 
-    detector = parse(userAgent + " " + appVersion + " " + vendor);
+    detector = parse(userAgent$1 + " " + appVersion + " " + vendor);
 
     var detector$1 = detector;
 
-    const device = require('current-device').default;
-
-    var sha1 = require('sha1');
-    var Base64 = require('js-base64').Base64;
-
     // 兼容单元测试环境
-    let win$1;
+    let win;
     if (typeof window === 'undefined') {
-      win$1 = {
+      win = {
         navigator: {
           userAgent: ''
         },
@@ -612,8 +1047,10 @@
         }
       };
     } else {
-      win$1 = window;
+      win = window;
     }
+
+    const breaker = {};
 
     const _ = {
       each(obj, iterator, context) {
@@ -639,7 +1076,7 @@
         }
       },
       extend(obj) {
-        _.each(slice.call(arguments, 1), function (source) {
+        _.each(Array.prototype.slice.call(arguments, 1), function (source) {
           for (let prop in source) {
             if (source[prop] !== void 0) {
               obj[prop] = source[prop];
@@ -665,10 +1102,10 @@
           return iterable.toArray();
         }
         if (_.isArray(iterable)) {
-          return slice.call(iterable);
+          return Array.prototype.slice.call(iterable);
         }
         if (_.isArguments(iterable)) {
-          return slice.call(iterable);
+          return Array.prototype.slice.call(iterable);
         }
         return _.values(iterable);
       },
@@ -707,10 +1144,10 @@
         return bool;
       },
       base64Encode(str) {
-        return Base64.encode(str);
+        return base64Encode(str);
       },
       sha1(str) {
-        return sha1(str);
+        return '';
       },
       // 对象的字段值截取
       truncate(obj, length) {
@@ -778,7 +1215,7 @@
       getHost(url) {
         let host = '';
         if (!url) {
-          url = win$1.location.href;
+          url = win.location.href;
         }
         const regex = /.*\:\/\/([^\/]*).*/;
         const match = url.match(regex);
@@ -805,7 +1242,7 @@
       deviceModel() {
         let deviceModel = '';
         if (device.android()) {
-          const sss = win$1.navigator.userAgent.split(";");
+          const sss = win.navigator.userAgent.split(";");
           const i = sss.indexOf("Build/");
           if (i > -1) {
             deviceModel = sss[i].substring(0, sss[i].indexOf("Build/"));
@@ -851,23 +1288,23 @@
           // 浏览器版本
           browserVersion: detector$1.browser.fullVersion,
           // 页面标题
-          title: win$1.document.title || '',
+          title: win.document.title || '',
           // 页面路径
-          urlPath: win$1.location.pathname || '',
+          urlPath: win.location.pathname || '',
           // 页面url
-          currentUrl: win$1.location.href,
+          currentUrl: win.location.href,
           // 域名
-          currentDomain: this.domain(win$1.location.href),
+          currentDomain: this.domain(win.location.href),
           // referrer 数据来源
-          referrer: win$1.document.referrer,
+          referrer: win.document.referrer,
           // referrer 域名
-          referringDomain: this.domain(win$1.document.referrer),
+          referringDomain: this.domain(win.document.referrer),
           // 本地语言
-          language: win$1.navigator.language || '',
+          language: win.navigator.language || '',
           // 客户端分辨率 width
-          screenWidth: win$1.screen.width,
+          screenWidth: win.screen.width,
           // 客户端分辨率 height
-          screenHeight: win$1.screen.height
+          screenHeight: win.screen.height
         };
       }
     };
@@ -1048,10 +1485,8 @@
         }
         var val = T() + '-' + R() + '-' + UA() + '-' + se + '-' + T();
         if (val) {
-          just_test_distinctid_2 = 1;
           return val;
         } else {
-          just_test_distinctid_2 = 2;
           return (String(Math.random()) + String(Math.random()) + String(Math.random())).slice(2, 15);
         }
       };
@@ -1180,7 +1615,7 @@
       }
     };
 
-    const windowConsole = win$1.console;
+    const windowConsole = win.console;
     const console = {
       /** @type {function(...[*])} */
       log: function () {
@@ -1213,10 +1648,6 @@
       constructor(instance) {
         this.instance = instance;
         this['local_storage'] = this.instance['local_storage'];
-        this['get_property'] = this.instance['get_property'];
-        this['get_device_id'] = this.instance['get_device_id'];
-        this['_get_config'] = this.instance['_get_config'];
-        this['_set_config'] = this.instance['_set_config'];
       }
       /**
        * 检测设置的属性是否为系统保留属性
@@ -1231,11 +1662,17 @@
        * @param {Function} callback 
        */
       _send_request(properties, callback) {
+        if (!_.isFunction(callback)) {
+          callback = function () {};
+        }
+
+        properties = properties || {};
+
         let data = {
           dataType: SYSTEM_EVENT_TYPE,
           // 客户端唯一凭证(设备凭证)
-          deviceId: this.get_device_id(),
-          userId: this.get_property('user_id'),
+          deviceId: this.instance.get_device_id(),
+          userId: this.instance.get_property('user_id'),
           // 上报时间
           time: new Date().getTime(),
           // sdk类型 （js，小程序、安卓、IOS、server、pc）
@@ -1243,28 +1680,30 @@
           // 属性事件id
           eventId: PEOPLE_PROPERTY_ID,
           // 用户首次访问时间
-          persistedTime: this.get_property('persistedTime'),
+          persistedTime: this.instance.get_property('persistedTime'),
           // 页面打开场景, 默认 Browser
           pageOpenScene: 'Browser',
           // 自定义用户属性
-          attributes: properties || {}
+          attributes: properties
         };
 
         // 上报数据对象字段截取
-        const truncateLength = this._get_config('truncateLength');
+        const truncateLength = this.instance._get_config('truncateLength');
+        let truncated_data = data;
         if (_.isNumber(truncateLength) && truncateLength > 0) {
-          data = _.truncate(data, truncateLength);
+          truncated_data = _.truncate(data, truncateLength);
         }
         const callback_fn = response => {
           callback(response, data);
         };
-        const url = this._get_config('api_host') + '/track/';
+        let url = this.instance._get_config('track_url');
+
         // 数据上报方式
-        const track_type = this._get_config('track_type');
+        const track_type = this.instance._get_config('track_type');
         if (track_type === 'img') {
           url += 'track.gif';
         }
-        _.sendRequest(url, track_type, { data: _.base64Encode(_.JSONEncode(truncated_data)), token: this._get_config('token') }, callback_fn);
+        _.sendRequest(url, track_type, { data: _.base64Encode(_.JSONEncode(truncated_data)), token: this.instance._get_config('token') }, callback_fn);
       }
       /**
        * 设置用户属性
@@ -1293,10 +1732,6 @@
       constructor(instance) {
         this.instance = instance;
         this['local_storage'] = this.instance['local_storage'];
-        this['get_property'] = this.instance['get_property'];
-        this['get_device_id'] = this.instance['get_device_id'];
-        this['_get_config'] = this.instance['_get_config'];
-        this['_set_config'] = this.instance['_set_config'];
         // 初始化时间
         this['local_storage'].register_once({
           updatedTime: 0,
@@ -1312,7 +1747,7 @@
        * 判断是否为其它渠道
        */
       _check_channel() {
-        const referrer = this.get_property('sessionReferrer');
+        const referrer = this.instance.get_property('sessionReferrer');
         let is_other_channel = false;
         // 若本地缓存的referrer 的host跟当前页不一样，那么可以确定是其它渠道进来的
         if (_.getHost(referrer) !== window.location.host) {
@@ -1327,7 +1762,7 @@
        * @returns {Boolean} 
        */
       _event_is_disabled(event_name) {
-        return true;
+        return false;
       }
       /**
        * 打开新会话
@@ -1346,12 +1781,12 @@
       _close_cur_session() {
         /*
          为了便于绘制用户事件发生轨迹图，区分会话close和最后一次事件触发时间的顺序，会话关闭时间需要做些微调
-         1. 如果本地拿到了上次（非会话事件）事件的触发时间，time = this.get_property('LASTEVENT').time + 1;
+         1. 如果本地拿到了上次（非会话事件）事件的触发时间，time = this.instance.get_property('LASTEVENT').time + 1;
          2. 如果未拿到，time = new Date().getTime() - 1;
         */
         let time = new Date().getTime() - 1;
-        const sessionStartTime = this.get_property('sessionStartTime');
-        const LASTEVENT = this.get_property('LASTEVENT');
+        const sessionStartTime = this.instance.get_property('sessionStartTime');
+        const LASTEVENT = this.instance.get_property('LASTEVENT');
         if (LASTEVENT && LASTEVENT.time) {
           time = LASTEVENT.time + 1;
         }
@@ -1368,14 +1803,14 @@
        * 判断条件：会话首次开始、指定的一段时间内用户无事件操作、其它渠道进来
       */
       _session(callback) {
-        const session_start_time = 1 * this.get_property('sessionStartTime') / 1000;
-        const updated_time = 1 * this.get_property('updatedTime') / 1000;
+        const session_start_time = 1 * this.instance.get_property('sessionStartTime') / 1000;
+        const updated_time = 1 * this.instance.get_property('updatedTime') / 1000;
         const now_date_time_ms = new Date().getTime();
         const now_date_time_se = 1 * now_date_time_ms / 1000;
         // 其它渠道判断
         const other_channel_Bool = this._check_channel();
         //会话结束判断
-        if (session_start_time === 0 || now_date_time_se > updated_time + 60 * this._get_config('session_interval_mins') || other_channel_Bool) {
+        if (session_start_time === 0 || now_date_time_se > updated_time + 60 * this.instance._get_config('session_interval_mins') || other_channel_Bool) {
           // 当会话首次开始时，不用发送会话关闭事件
           if (session_start_time === 0) {
             // 新打开一个会话
@@ -1474,12 +1909,12 @@
         }
 
         // 设置通用的事件属性
-        user_set_properties = _.extend({}, this.get_property('superProperties'), user_set_properties);
+        user_set_properties = _.extend({}, this.instance.get_property('superProperties'), user_set_properties);
 
         // 上报数据
         let data = {
           dataType: data_type,
-          userId: this.get_property('user_id'),
+          userId: this.instance.get_property('user_id'),
           // sdk类型 （js，小程序、安卓、IOS、server、pc）
           sdkType: 'js',
           sdkVersion: CONFIG.LIB_VERSION,
@@ -1488,16 +1923,18 @@
           // 事件触发时间
           time: time,
           // 用户首次访问时间
-          persistedTime: this.get_property('persistedTime'),
+          persistedTime: this.instance.get_property('persistedTime'),
           // 客户端唯一凭证(设备凭证)
-          deviceId: this.get_device_id(),
+          deviceId: this.instance.get_device_id(),
           // 页面打开场景, 默认 Browser
           pageOpenScene: 'Browser',
           // 应用凭证
-          token: this._get_config('token'),
+          token: this.instance._get_config('token'),
           costTime: costTime,
           // 当前关闭的会话时长
           sessionTotalLength: properties.sessionTotalLength,
+          // 当前会话id
+          sessionUuid: this.instance.get_property('sessionUuid'),
           // 事件自定义属性
           attributes: user_set_properties
         };
@@ -1516,7 +1953,7 @@
             });
           }
         }
-        if (!this._get_config('SPA').is) {
+        if (!this.instance._get_config('SPA').is) {
           if (['smart_activate', 'smart_session_close'].indexOf(event_name) > 0) {
             this['local_storage'].register({
               sessionReferrer: document.location.href
@@ -1525,8 +1962,8 @@
         }
 
         // 当启动单页面后，切换页面，refer为空，此时做处理
-        if (this._get_config('SPA').is) {
-          const sessionReferrer = this.get_property('sessionReferrer');
+        if (this.instance._get_config('SPA').is) {
+          const sessionReferrer = this.instance.get_property('sessionReferrer');
           if (sessionReferrer !== data['referrer']) {
             data['referrer'] = sessionReferrer;
             data['referringDomain'] = _.info.domain(sessionReferrer);
@@ -1534,19 +1971,25 @@
         }
 
         // 上报数据对象字段截取
-        const truncateLength = this._get_config('truncateLength');
+        const truncateLength = this.instance._get_config('truncateLength');
+        let truncated_data = data;
         if (_.isNumber(truncateLength) && truncateLength > 0) {
-          data = _.truncate(data, truncateLength);
+          truncated_data = _.truncate(data, truncateLength);
         }
         const callback_fn = response => {
           callback(response, data);
         };
-        const url = this._get_config('api_host') + '/track/';
-        const track_type = this._get_config('track_type');
+        let url = this.instance._get_config('track_url');
+        const track_type = this.instance._get_config('track_type');
         if (track_type === 'img') {
           url += 'track.gif';
         }
-        _.sendRequest(url, track_type, { data: _.base64Encode(_.JSONEncode(truncated_data)), token: this._get_config('token') }, callback_fn);
+        _.sendRequest(url, track_type, { data: _.base64Encode(_.JSONEncode(truncated_data)), token: this.instance._get_config('token') }, callback_fn);
+
+        // 当触发的事件不是这些事件(smart_session_start,smart_session_close,smart_activate)时，触发检测 session 方法
+        if (['smart_session_start', 'smart_session_close', 'smart_activate'].indexOf(event_name) === -1) {
+          this._session();
+        }
 
         // 保存最后一次用户触发事件（除了会话事件以外）的事件id以及时间，通过这个时间确定会话关闭时的时间
         if (['smart_session_start', 'smart_session_close'].indexOf(event_name) === -1) {
@@ -1588,6 +2031,7 @@
             if (!supported) {
               console.error('localStorage 不支持，自动退回到cookie存储方式');
             }
+            return supported;
           };
 
           if (storage_type === 'localStorage' && localStorage_supported()) {
@@ -1618,7 +2062,7 @@
         this.default_expiry = this.expire_days = localStorageConfig['cookie_expiration'];
         this.set_disabled(localStorageConfig['disable']);
         this.set_cross_subdomain(localStorageConfig['cross_subdomain_cookie']);
-        this.set_secure(localStorageConfig('secure_cookie'));
+        this.set_secure(localStorageConfig['secure_cookie']);
       }
       // 设置关闭本地保存操作，设置为关闭后，本地数据移除
       set_disabled(disabled) {
@@ -1664,7 +2108,19 @@
         }
       }
       // sdk升级，旧的sdk存储数据移到新的sdk存储数据中，然后删除旧的存储数据（暂不实现）
-      upgrade(config) {}
+      // 存储方式改变，改为cookie切换到 localStorage
+      upgrade(config) {
+        let old_cookie;
+        if (this.storage === _.localStorage) {
+          old_cookie = _.cookie.parse(this.name);
+          _.cookie.remove(this.name);
+          _.cookie.remove(this.name, true);
+
+          if (old_cookie) {
+            this.register_once(old_cookie);
+          }
+        }
+      }
       // 数据保存到本地
       save() {
         // disabled配置为true, 数据不保存到本地
@@ -1852,6 +2308,15 @@
         this['user'] = new USER_TRACK(this);
         // 设置设备凭证
         this._set_device_id();
+
+        // 配置为自动触发PV事件
+        if (this._get_config('pageview')) {
+          this.track_pv();
+        } else {
+          // 若没有自动触发事件，还需检测session
+          this._session();
+        }
+
         // persistedTime 首次访问应用时间
         this['local_storage'].register_once({ 'persistedTime': new Date().getTime() }, '');
         // 单页面
@@ -1872,7 +2337,7 @@
        */
       _set_config(config) {
         if (_.isObject(config)) {
-          _.extend(this['config'], config);
+          this['config'] = _.extend(this['config'], config);
           CONFIG.DEBUG = CONFIG.DEBUG || this._get_config('debug');
         }
       }
@@ -1900,7 +2365,7 @@
         let track_data = {};
         if (!this.get_device_id()) {
           this['local_storage'].register_once({ 'deviceId': _.UUID() }, '');
-          track_data = this.track('smart_activate');
+          track_data = this.track_event('smart_activate');
         }
         return track_data;
       }

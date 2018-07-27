@@ -12,10 +12,6 @@ class EVENT_TRACK {
   constructor(instance) {
     this.instance = instance;
     this['local_storage'] = this.instance['local_storage'];
-    this['get_property'] = this.instance['get_property'];
-    this['get_device_id'] = this.instance['get_device_id'];
-    this['_get_config'] = this.instance['_get_config'];
-    this['_set_config'] = this.instance['_set_config'];
     // 初始化时间
     this['local_storage'].register_once({
       updatedTime: 0,
@@ -25,13 +21,14 @@ class EVENT_TRACK {
     this['local_storage'].register({
       sessionReferrer: window.document.referrer
     });
+
   }
   /**
    *
    * 判断是否为其它渠道
    */
   _check_channel() {
-    const referrer = this.get_property('sessionReferrer');
+    const referrer = this.instance.get_property('sessionReferrer');
     let is_other_channel = false;
     // 若本地缓存的referrer 的host跟当前页不一样，那么可以确定是其它渠道进来的
     if (_.getHost(referrer) !== window.location.host) {
@@ -46,7 +43,7 @@ class EVENT_TRACK {
    * @returns {Boolean} 
    */
   _event_is_disabled(event_name) {
-    return true;
+    return false;
   }
   /**
    * 打开新会话
@@ -65,12 +62,12 @@ class EVENT_TRACK {
   _close_cur_session() {
     /*
      为了便于绘制用户事件发生轨迹图，区分会话close和最后一次事件触发时间的顺序，会话关闭时间需要做些微调
-     1. 如果本地拿到了上次（非会话事件）事件的触发时间，time = this.get_property('LASTEVENT').time + 1;
+     1. 如果本地拿到了上次（非会话事件）事件的触发时间，time = this.instance.get_property('LASTEVENT').time + 1;
      2. 如果未拿到，time = new Date().getTime() - 1;
     */
     let time = new Date().getTime() - 1;
-    const sessionStartTime = this.get_property('sessionStartTime');
-    const LASTEVENT = this.get_property('LASTEVENT');
+    const sessionStartTime = this.instance.get_property('sessionStartTime');
+    const LASTEVENT = this.instance.get_property('LASTEVENT');
     if (LASTEVENT && LASTEVENT.time) {
       time = LASTEVENT.time + 1;
     }
@@ -87,8 +84,8 @@ class EVENT_TRACK {
    * 判断条件：会话首次开始、指定的一段时间内用户无事件操作、其它渠道进来
   */
   _session(callback) {
-    const session_start_time = 1 * this.get_property('sessionStartTime') / 1000;
-    const updated_time = 1 * this.get_property('updatedTime') / 1000;
+    const session_start_time = 1 * this.instance.get_property('sessionStartTime') / 1000;
+    const updated_time = 1 * this.instance.get_property('updatedTime') / 1000;
     const now_date_time_ms = new Date().getTime();
     const now_date_time_se = 1 * now_date_time_ms / 1000;
     // 其它渠道判断
@@ -96,7 +93,7 @@ class EVENT_TRACK {
     //会话结束判断
     if (
       session_start_time === 0 ||
-      now_date_time_se > updated_time + 60 * this._get_config('session_interval_mins') ||
+      now_date_time_se > updated_time + 60 * this.instance._get_config('session_interval_mins') ||
       other_channel_Bool
     ) {
       // 当会话首次开始时，不用发送会话关闭事件
@@ -196,13 +193,15 @@ class EVENT_TRACK {
       delete user_set_properties['sessionTotalLength'];
     }
 
+
+
     // 设置通用的事件属性
-    user_set_properties = _.extend({}, this.get_property('superProperties'), user_set_properties);
+    user_set_properties = _.extend({}, this.instance.get_property('superProperties'), user_set_properties);
     
     // 上报数据
     let data = {
       dataType: data_type,
-      userId: this.get_property('user_id'),
+      userId: this.instance.get_property('user_id'),
       // sdk类型 （js，小程序、安卓、IOS、server、pc）
       sdkType: 'js',
       sdkVersion: CONFIG.LIB_VERSION,
@@ -211,16 +210,18 @@ class EVENT_TRACK {
       // 事件触发时间
       time: time,
       // 用户首次访问时间
-      persistedTime: this.get_property('persistedTime'),
+      persistedTime: this.instance.get_property('persistedTime'),
       // 客户端唯一凭证(设备凭证)
-      deviceId: this.get_device_id(),
+      deviceId: this.instance.get_device_id(),
       // 页面打开场景, 默认 Browser
       pageOpenScene: 'Browser',
       // 应用凭证
-      token: this._get_config('token'),
+      token: this.instance._get_config('token'),
       costTime: costTime,
       // 当前关闭的会话时长
       sessionTotalLength: properties.sessionTotalLength,
+      // 当前会话id
+      sessionUuid: this.instance.get_property('sessionUuid'),
       // 事件自定义属性
       attributes: user_set_properties
     };
@@ -239,7 +240,7 @@ class EVENT_TRACK {
         });
       }
     }
-    if(!this._get_config('SPA').is) {
+    if(!this.instance._get_config('SPA').is) {
       if( ['smart_activate','smart_session_close'].indexOf(event_name) > 0 ) {
         this['local_storage'].register({
             sessionReferrer: document.location.href
@@ -248,8 +249,8 @@ class EVENT_TRACK {
     }
 
     // 当启动单页面后，切换页面，refer为空，此时做处理
-    if (this._get_config('SPA').is) {
-      const sessionReferrer = this.get_property('sessionReferrer');
+    if (this.instance._get_config('SPA').is) {
+      const sessionReferrer = this.instance.get_property('sessionReferrer');
       if (sessionReferrer !== data['referrer']) {
         data['referrer'] = sessionReferrer;
         data['referringDomain'] = _.info.domain(sessionReferrer);
@@ -257,24 +258,30 @@ class EVENT_TRACK {
     }
 
     // 上报数据对象字段截取
-    const truncateLength = this._get_config('truncateLength');
+    const truncateLength = this.instance._get_config('truncateLength');
+    let truncated_data = data;
     if (_.isNumber(truncateLength) && truncateLength > 0) {
-      data = _.truncate(data, truncateLength);
+      truncated_data = _.truncate(data, truncateLength);
     }
     const callback_fn = (response) => {
       callback(response, data);
     };
-    const url = this._get_config('api_host') + '/track/';
-    const track_type = this._get_config('track_type');
+    let url = this.instance._get_config('track_url');
+    const track_type = this.instance._get_config('track_type');
     if (track_type === 'img') {
       url += 'track.gif';
     }
     _.sendRequest(
       url, 
       track_type, 
-      { data: _.base64Encode(_.JSONEncode(truncated_data)), token: this._get_config('token') }, 
+      { data: _.base64Encode(_.JSONEncode(truncated_data)), token: this.instance._get_config('token') }, 
       callback_fn
     );
+
+    // 当触发的事件不是这些事件(smart_session_start,smart_session_close,smart_activate)时，触发检测 session 方法
+    if(['smart_session_start', 'smart_session_close', 'smart_activate'].indexOf(event_name) === -1) {
+      this._session();
+    }
 
     // 保存最后一次用户触发事件（除了会话事件以外）的事件id以及时间，通过这个时间确定会话关闭时的时间
     if (['smart_session_start', 'smart_session_close'].indexOf(event_name) === -1) {
@@ -284,7 +291,7 @@ class EVENT_TRACK {
           time: time
         }
       });
-    }
+    }    
   }
 }
 

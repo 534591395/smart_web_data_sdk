@@ -5,6 +5,7 @@
   "main": "build/",
   "directories": {},
   "scripts": {
+    "server": "node ./server",
     "build": "build.sh"
   },
   "devDependencies": {
@@ -40,7 +41,8 @@
     "rollup-plugin-babel": "^3.0.3",
     "rollup-plugin-npm": "^1.4.0",
     "style-loader": "^0.19.0",
-    "webpack": "^2.7.0"
+    "webpack": "^2.7.0",
+    "express": "^4.12.2"
   },
   "dependencies": {
     "antd": "^3.5.4",

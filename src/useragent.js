@@ -1,3 +1,46 @@
+// 兼容单元测试环境
+let win;
+if (typeof(window) === 'undefined') {
+    win = {
+      navigator: {
+        userAgent: ''
+      },
+      location: {
+        pathname: '',
+        href: ''
+      },
+      document: {
+        
+      },
+      screen: {
+        width: '',
+        height: ''
+      }
+    };
+} else {
+  win = window;
+}
+
+function toString(object) {
+    return Object.prototype.toString.call(object);
+  }
+  
+  function isObject(object) {
+    return toString(object) === "[object Object]";
+  }
+  
+  function isFunction(object) {
+     return toString(object) === "[object Function]";
+  }
+  
+  function each(object, factory) {
+      for (var i = 0, l = object.length; i < l; i++) {
+          if (factory.call(object, object[i], i) === false) {
+          break;
+          }
+      }
+  }
+
 var NA_VERSION = "-1";
 var external = win.external;
 var userAgent = win.navigator.userAgent || "";

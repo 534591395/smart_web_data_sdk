@@ -1,13 +1,13 @@
 // 默认配置
 const DEFAULT_CONFIG = {
   // 上报服务器域名配置
-  'api_host': 'localhost:3301',
+  'track_url': 'http://localhost:3300/',
   // debug启动配置
   'debug': false,
   // 本地存储配置
   'local_storage': {
     // 存储方式  localStorage || cookie
-    'type': 'cookie',
+    'type': 'localStorage',
     // 存储名称
     'name': '',
     // 关闭存储功能

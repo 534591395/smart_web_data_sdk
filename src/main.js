@@ -34,6 +34,15 @@ class SMARTLib {
     this['user'] = new USER_TRACK(this);
     // 设置设备凭证
     this._set_device_id();
+
+    // 配置为自动触发PV事件
+    if (this._get_config('pageview')) {
+      this.track_pv();
+    } else {
+      // 若没有自动触发事件，还需检测session
+      this._session();
+    }
+
     // persistedTime 首次访问应用时间
     this['local_storage'].register_once({'persistedTime': new Date().getTime()}, '');
     // 单页面
@@ -54,7 +63,7 @@ class SMARTLib {
    */
   _set_config(config) {
     if (_.isObject(config)) {
-      _.extend(this['config'], config);
+      this['config'] = _.extend(this['config'], config);
       CONFIG.DEBUG = CONFIG.DEBUG || this._get_config('debug');
     }
   }
@@ -82,7 +91,7 @@ class SMARTLib {
     let track_data = {};
     if (!this.get_device_id()) {
       this['local_storage'].register_once({'deviceId': _.UUID()}, '');
-      track_data = this.track('smart_activate');
+      track_data = this.track_event('smart_activate');
     }
     return track_data;
   }

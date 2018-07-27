@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <header>
+    <meta charset="uft-8">
+    <title>示例</title>
+    <meta content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" name="viewport">
+    <style type="text/css">
+      body {
+          height: 100%;
+          overflow: hidden;
+      }
+      /*滚动条*/
+      ::-webkit-scrollbar {width: 6px;height:6px;}
+      ::-webkit-scrollbar-track-piece{background-color: #eee;margin: -2px;}
+      ::-webkit-scrollbar-thumb{background: rgb(202, 9, 9);box-shadow: 0 1px 3px 0 rgba(0,0,0,0.15);border-radius: 8px;}
+      ::-webkit-scrollbar-thumb:vertical:hover{background: #bbb}
+      ::-webkit-scrollbar-thumb:horizontal:hover{background: #bbb}
+      p,h1,h2,a {
+          cursor: pointer;
+      }
+      #prebox {
+          width: 500px;
+          position: fixed;
+          bottom: 10px;
+          right: 10px;
+          z-index: 999;
+          padding: 10px;
+          background: #1E211F;
+          color: #fff;
+          border-radius: 6px;
+          pointer-events: auto;
+          -webkit-overflow-scrolling: touch;
+      }
+      #pre {
+          height: 800px;
+          overflow: auto;
+          font-size: 14px;
+      }
+    </style>
+    <script src="/build/0.1.0/smart.sync.js"></script>
+    <script>
+      smart.init('xxx', {
+        local_storage: {
+          type: 'localStorage'
+        }
+      });
+    </script>
+  </header>
+  <body>
+      <div style="clear:both;">
+          <h1>测试登录</h1>
+          <h1>测试退出</h1>
+          <h2>测试用户自定义事件</h2>
+          <p>设置用户自定义属性</p>
+      </div>
+
+      <script>
+        document.getElementsByTagName('h1')[0].onclick = function(e) {
+          //smart.login(document.getElementById('userId').value);
+        }
+        document.getElementsByTagName('h1')[1].onclick = function(e) {
+          //smart.logout();
+        }
+        document.getElementsByTagName('h2')[0].onclick = function(e) {
+          smart.track_event("buy",{"price":"￥123", "id": 'xxxx-xxxx-xxxx'});
+        }
+        document.getElementsByTagName('p')[0].onclick = function(e) {
+          smart.user.set({ "name": "汪洋","country":"中国","province":"浙江省","city":"杭州市","age":"100","gender":"男", "niu":"自定义用户属性" });
+        }
+      </script>
+  </body>
+</html>

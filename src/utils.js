@@ -3,10 +3,10 @@ import {
 } from './config'
 
 
-const device = require('current-device').default
+// 注意：current-device install后，记得把它的 json 中  "main" 值指向 es6版本  "es/index.js" 
+import device from 'current-device'
 
-const sha1 = require('sha1');
-const Base64 = require('js-base64').Base64;
+import {base64Encode} from './base64'
 
 import detector from './useragent'
 
@@ -33,6 +33,8 @@ if (typeof(window) === 'undefined') {
   win = window;
 }
 
+const breaker = {};
+
 const _ = {
   each(obj, iterator, context) {
     if (obj === null || obj === undefined) {
@@ -57,7 +59,7 @@ const _ = {
     }
   },
   extend(obj) {
-    _.each(slice.call(arguments, 1), function(source) {
+    _.each(Array.prototype.slice.call(arguments, 1), function(source) {
       for (let prop in source) {
           if (source[prop] !== void 0) {
               obj[prop] = source[prop];
@@ -83,10 +85,10 @@ const _ = {
       return iterable.toArray();
     }
     if (_.isArray(iterable)) {
-      return slice.call(iterable);
+      return Array.prototype.slice.call(iterable);
     }
     if (_.isArguments(iterable)) {
-      return slice.call(iterable);
+      return Array.prototype.slice.call(iterable);
     }
     return _.values(iterable);
   },
@@ -125,10 +127,10 @@ const _ = {
     return bool;
   },
   base64Encode(str) {
-    return Base64.encode(str);
+    return base64Encode(str);
   },
   sha1(str) {
-    return sha1(str);
+    return '';
   },
   // 对象的字段值截取
   truncate(obj, length) {
@@ -458,10 +460,8 @@ _.UUID = (function() {
       }
       var val = (T() + '-' + R() + '-' + UA() + '-' + se + '-' + T());
       if(val){
-        just_test_distinctid_2 = 1;
         return val; 
       }else{
-        just_test_distinctid_2 = 2;
         return (String(Math.random()) + String(Math.random()) + String(Math.random())).slice(2, 15);
       }
   

@@ -29,6 +29,7 @@ class LOCAL_STORAGE {
         if (!supported) {
           console.error('localStorage 不支持，自动退回到cookie存储方式');
         }
+        return supported;
       };
 
       if (storage_type === 'localStorage' && localStorage_supported()) {
@@ -59,7 +60,7 @@ class LOCAL_STORAGE {
     this.default_expiry = this.expire_days = localStorageConfig['cookie_expiration'];
     this.set_disabled(localStorageConfig['disable']);
     this.set_cross_subdomain(localStorageConfig['cross_subdomain_cookie']);
-    this.set_secure(localStorageConfig('secure_cookie'));
+    this.set_secure(localStorageConfig['secure_cookie']);
   }
   // 设置关闭本地保存操作，设置为关闭后，本地数据移除
   set_disabled(disabled) {
@@ -105,7 +106,19 @@ class LOCAL_STORAGE {
     }
   }
   // sdk升级，旧的sdk存储数据移到新的sdk存储数据中，然后删除旧的存储数据（暂不实现）
-  upgrade(config) {}
+  // 存储方式改变，改为cookie切换到 localStorage
+  upgrade(config) {
+    let old_cookie;
+    if (this.storage === _.localStorage) {
+      old_cookie = _.cookie.parse(this.name);
+      _.cookie.remove(this.name);
+      _.cookie.remove(this.name, true);
+
+      if (old_cookie) {
+        this.register_once(old_cookie);
+      }
+    }
+  }
   // 数据保存到本地
   save() {
     // disabled配置为true, 数据不保存到本地
