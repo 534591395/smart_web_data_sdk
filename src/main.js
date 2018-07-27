@@ -14,7 +14,7 @@ import LOCAL_STORAGE from './local_storage'
 // 单页面
 import SPA from './spa'
 
-class SMART {
+class SMARTLib {
   /**
    * 
    * @param {String} token 上报数据凭证
@@ -22,6 +22,7 @@ class SMART {
    */
   constructor(token, config) {
     this['__loaded'] = true;
+    this._ = _;
     this['config'] = {};
     this._set_config(_.extend({}, DEFAULT_CONFIG, CONFIG, config, {'token': token}));
     this['local_storage'] = new LOCAL_STORAGE(this['config']);
@@ -30,7 +31,7 @@ class SMART {
     // 实例化事件对象
     this['event'] = new EVENT_TRACK(this);
     // 实例化用户对象
-    this['user'] = new USER_TRACK();
+    this['user'] = new USER_TRACK(this);
     // 设置设备凭证
     this._set_device_id();
     // persistedTime 首次访问应用时间
@@ -193,4 +194,4 @@ class SMART {
   }
 }
 
-export default SMART;
+export default SMARTLib;

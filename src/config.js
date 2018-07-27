@@ -106,7 +106,7 @@ const PEOPLE_RESERVED_PROPERTY = ['$deviceUdid', '$toekn'];
 // People类属性事件id，全局唯一
 const PEOPLE_PROPERTY_ID = 'smart_user_property';
 
-export default {
+export {
   CONFIG,
   DEFAULT_CONFIG,
   SYSTEM_EVENT_TYPE,

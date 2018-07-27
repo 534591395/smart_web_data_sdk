@@ -1,6 +1,6 @@
 {
   "name": "smart_web_data_sdk",
-  "version": "0.1.0",
+  "version": "",
   "description": "smart_web_data_sdk 是一个智能的web端大数据库，集成了数据采集、A/B 测试、机器学习。",
   "main": "build/",
   "directories": {},
@@ -26,7 +26,6 @@
     "cross-env": "^5.2.0",
     "css-loader": "^0.28.4",
     "eslint": "^2.4.0",
-    "express": "^4.12.2",
     "extract-text-webpack-plugin": "^2.1.2",
     "less": "^2.7.3",
     "less-loader": "^4.0.5",

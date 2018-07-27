@@ -2,9 +2,12 @@ import {
   CONFIG
 } from './config'
 
-import { Base64 } from 'js-base64'
-import sha1 from 'sha1'
-import device from 'current-device'
+
+const device = require('current-device').default
+
+const sha1 = require('sha1');
+const Base64 = require('js-base64').Base64;
+
 import detector from './useragent'
 
 // 兼容单元测试环境
@@ -27,7 +30,7 @@ if (typeof(window) === 'undefined') {
       }
     };
 } else {
-    win = window;
+  win = window;
 }
 
 const _ = {
@@ -62,9 +65,6 @@ const _ = {
       }
     });
     return obj;
-  },
-  isArray = Array.isArray || function(obj) {
-    return Object.prototype.toString.apply(obj) === '[object Array]';
   },
   isObject(obj) {
     return (obj === Object(obj) && !_.isArray(obj));
@@ -171,23 +171,6 @@ const _ = {
 
     return tmp_arr.join(arg_separator);
   },
-  // 判断数组中是否包含某字符串
-  contains(array, str) {
-    let = -1;
-    if(this.isArray(array)) {
-      return k;
-    }
-    if(!array && !item) {
-      return k;
-    }
-    for(let i = 0; i < array.length; i += 1) {
-      if(this.isFunction(array[i].indexOf)) {
-        if (array[i].indexOf(item) > 0)  
-          return i;
-      }
-    }
-    return k;
-  },
   // 删除左右两端的空格
   trim(str){
     if (!str) return; 
@@ -221,6 +204,9 @@ const _ = {
     return host;
   }
 };
+_.isArray = Array.isArray || function(obj) {
+  return Object.prototype.toString.apply(obj) === '[object Array]';
+};
 
 // 客户端基本属性
 _.info = {
@@ -236,7 +222,7 @@ _.info = {
     let deviceModel = '';
     if(device.android()) {
       const sss = win.navigator.userAgent.split(";");  
-      const i = _.contains(sss, "Build/");  
+      const i = sss.indexOf("Build/");  
       if (i > -1) {
         deviceModel = sss[i].substring(0, sss[i].indexOf("Build/"));  
       }
@@ -421,7 +407,7 @@ _.ajax = {
           req.send(null);
       } catch (e) {}
     }
-  };
+};
 
 // uuid
 _.UUID = (function() {
@@ -632,4 +618,4 @@ const console = {
   }
 };
 
-export default {_, console};
+export {_, console};

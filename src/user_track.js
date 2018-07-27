@@ -69,7 +69,7 @@ class USER_TRACK {
     );
   }
   /**
-   * 
+   * 设置用户属性
    * @param {*} prop 
    * @param {*} to 
    * @param {*} callback 

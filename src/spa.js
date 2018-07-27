@@ -1,7 +1,7 @@
 /**
  * 单页面模块
  */
-import {_} from './utils';
+import {_} from './utils'
 
 function on(obj, event, callFn) {
   if(obj[event]) {
