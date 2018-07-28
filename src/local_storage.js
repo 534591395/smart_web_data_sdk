@@ -177,10 +177,10 @@ class LOCAL_STORAGE {
   }
   /**
    * 移除指定的缓存数据，同时也清除本地的对应数据
-   * @param {*} prp
+   * @param {string} prop
    */
-  unregister(prp) {
-    if (prp in this['prop']) {
+  unregister(prop) {
+    if (prop in this['props']) {
       delete this['props'][prop];
       this.save();
     }

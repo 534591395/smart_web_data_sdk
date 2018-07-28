@@ -201,6 +201,17 @@ class SMARTLib {
   current_event_super_properties() {
     return this.get_property('superProperties');
   }
+  /**
+   * 用户登录和注册时调用
+   * @param {String} user_id 
+   */
+  login(user_id) {
+    this['event'].login(user_id);
+  }
+  // 清除本地用户信息，退出用户（选则调用）,建议平台网站不必调用（无需匿名用户的平台）
+  logout() {
+    this['event'].logout();
+  }
 }
 
 export default SMARTLib;

@@ -12,7 +12,7 @@ class EVENT_TRACK {
   constructor(instance) {
     this.instance = instance;
     this['local_storage'] = this.instance['local_storage'];
-    // 初始化时间
+    // 初始化时间(事件相关)
     this['local_storage'].register_once({
       updatedTime: 0,
       sessionStartTime: 0
@@ -21,7 +21,6 @@ class EVENT_TRACK {
     this['local_storage'].register({
       sessionReferrer: window.document.referrer
     });
-
   }
   /**
    *
@@ -115,6 +114,23 @@ class EVENT_TRACK {
     }
   }
   /**
+   * 用户注册
+   * @param {String} user_id 
+   */
+  _signup(user_id) {
+    // 默认是空值,若有值则调用退出
+    const anonymous_id = this.instance.get_property('userId');
+    if (anonymous_id !== user_id) {
+      if (anonymous_id) {
+        this.logout();
+      }
+      this.track('smart_u_signup', {
+        anonymousId: anonymous_id,
+        newUserId: user_id
+      });
+    }
+  }
+  /**
    * 设置一个指定事件的耗时监听器
    * @param {String} event_name
    */
@@ -201,7 +217,7 @@ class EVENT_TRACK {
     // 上报数据
     let data = {
       dataType: data_type,
-      userId: this.instance.get_property('user_id'),
+      userId: this.instance.get_property('userId'),
       // sdk类型 （js，小程序、安卓、IOS、server、pc）
       sdkType: 'js',
       sdkVersion: CONFIG.LIB_VERSION,
@@ -292,6 +308,20 @@ class EVENT_TRACK {
         }
       });
     }    
+  }
+  /**
+   * 用户登录和注册时调用
+   * @param {String} user_id 
+   */
+  login(user_id) {
+    this._signup(user_id);
+    this['local_storage'].register({'userId': user_id});
+    this.track('smart_u_login');
+  }
+  // 清除本地用户信息，退出用户（选则调用）
+  logout() {
+    this['local_storage'].unregister('userId');
+    this.track('smart_u_logout');
   }
 }
 

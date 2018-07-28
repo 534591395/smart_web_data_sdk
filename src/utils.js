@@ -6,7 +6,7 @@ import {
 // 注意：current-device install后，记得把它的 json 中  "main" 值指向 es6版本  "es/index.js" 
 import device from 'current-device'
 
-import {base64Encode} from './base64'
+import {base64Encode} from './coding'
 
 import detector from './useragent'
 

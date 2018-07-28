@@ -2,7 +2,7 @@
     'use strict';
 
     // 默认配置
-    const DEFAULT_CONFIG = {
+    var DEFAULT_CONFIG = {
       // 上报服务器域名配置
       'track_url': 'http://localhost:3300/',
       // debug启动配置
@@ -24,7 +24,7 @@
         'cookie_expiration': 1000
       },
       // 初始化sdk时触发的方法
-      'loaded': function () {},
+      'loaded': function loaded() {},
       // 上报数据实现形式  post, get, img
       'track_type': 'img',
       // 单页面应用配置
@@ -43,19 +43,19 @@
     };
 
     // 配置
-    const CONFIG = {
+    var CONFIG = {
       DEBUG: false,
       LIB_VERSION: '0.1.0'
     };
 
     // 系统事件类型（事件分为：系统事件和业务事件）
-    const SYSTEM_EVENT_TYPE = 'se';
+    var SYSTEM_EVENT_TYPE = 'se';
 
     // 业务事件类型
-    const BUSSINESS_EVENT_TYPE = 'be';
+    var BUSSINESS_EVENT_TYPE = 'be';
 
     // 系统事件列表
-    const SYSTEM_EVENT_OBJECT = {
+    var SYSTEM_EVENT_OBJECT = {
       // 会话开始事件
       'smart_session_start': {
         'data_type': SYSTEM_EVENT_TYPE
@@ -103,15 +103,17 @@
     };
 
     // People类系统保留属性，用户设置这些属性将无法成功
-    const PEOPLE_RESERVED_PROPERTY = ['$deviceUdid', '$toekn'];
+    var PEOPLE_RESERVED_PROPERTY = ['$deviceUdid', '$toekn'];
 
     // People类属性事件id，全局唯一
-    const PEOPLE_PROPERTY_ID = 'smart_user_property';
+    var PEOPLE_PROPERTY_ID = 'smart_user_property';
 
-    var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) {
-      return typeof obj;
+    var _typeof2 = typeof Symbol === "function" && typeof Symbol.iterator === "symbol" ? function (obj) { return typeof obj; } : function (obj) { return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj; };
+
+    var _typeof = typeof Symbol === "function" && _typeof2(Symbol.iterator) === "symbol" ? function (obj) {
+      return typeof obj === "undefined" ? "undefined" : _typeof2(obj);
     } : function (obj) {
-      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj;
+      return obj && typeof Symbol === "function" && obj.constructor === Symbol && obj !== Symbol.prototype ? "symbol" : typeof obj === "undefined" ? "undefined" : _typeof2(obj);
     };
 
     // Save the previous value of the device variable.
@@ -416,7 +418,7 @@
 
     setOrientationCache();
 
-    const utf8Encode = function (string) {
+    var utf8Encode = function utf8Encode(string) {
       string = (string + '').replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
       var utftext = '',
@@ -455,7 +457,7 @@
       return utftext;
     };
 
-    const base64Encode = function (data) {
+    var base64Encode = function base64Encode(data) {
       var b64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
       var o1,
           o2,
@@ -508,7 +510,7 @@
     };
 
     // 兼容单元测试环境
-    let win$1;
+    var win$1 = void 0;
     if (typeof window === 'undefined') {
         win$1 = {
             navigator: {
@@ -956,7 +958,7 @@
     // 解析 UserAgent 字符串
     // @param {String} ua, userAgent string.
     // @return {Object}
-    var parse = function (ua) {
+    var parse = function parse(ua) {
         ua = (ua || "").toLowerCase();
         var d = {};
 
@@ -1030,7 +1032,7 @@
     var detector$1 = detector;
 
     // 兼容单元测试环境
-    let win;
+    var win = void 0;
     if (typeof window === 'undefined') {
       win = {
         navigator: {
@@ -1050,23 +1052,23 @@
       win = window;
     }
 
-    const breaker = {};
+    var breaker = {};
 
-    const _ = {
-      each(obj, iterator, context) {
+    var _ = {
+      each: function each(obj, iterator, context) {
         if (obj === null || obj === undefined) {
           return;
         }
         if (Array.prototype.forEach && obj.forEach === Array.prototype.forEach) {
           obj.forEach(iterator, context);
         } else if (obj.length === +obj.length) {
-          for (let i = 0, l = obj.length; i < l; i++) {
+          for (var i = 0, l = obj.length; i < l; i++) {
             if (i in obj && iterator.call(context, obj[i], i, obj) === breaker) {
               return;
             }
           }
         } else {
-          for (let key in obj) {
+          for (var key in obj) {
             if (obj.hasOwnProperty.call(obj, key)) {
               if (iterator.call(context, obj[key], key, obj) === breaker) {
                 return;
@@ -1075,9 +1077,9 @@
           }
         }
       },
-      extend(obj) {
+      extend: function extend(obj) {
         _.each(Array.prototype.slice.call(arguments, 1), function (source) {
-          for (let prop in source) {
+          for (var prop in source) {
             if (source[prop] !== void 0) {
               obj[prop] = source[prop];
             }
@@ -1085,16 +1087,16 @@
         });
         return obj;
       },
-      isObject(obj) {
+      isObject: function isObject(obj) {
         return obj === Object(obj) && !_.isArray(obj);
       },
-      isUndefined(obj) {
+      isUndefined: function isUndefined(obj) {
         return obj === void 0;
       },
-      isArguments(obj) {
+      isArguments: function isArguments(obj) {
         return !!(obj && hasOwnProperty.call(obj, 'callee'));
       },
-      toArray(iterable) {
+      toArray: function toArray(iterable) {
         if (!iterable) {
           return [];
         }
@@ -1109,7 +1111,7 @@
         }
         return _.values(iterable);
       },
-      values(obj) {
+      values: function values(obj) {
         var results = [];
         if (obj === null) {
           return results;
@@ -1119,39 +1121,43 @@
         });
         return results;
       },
+
       // 转化成json
-      JSONDecode(string) {
+      JSONDecode: function JSONDecode(string) {
         try {
           return JSON.parse(string);
         } catch (error) {
           return {};
         }
       },
+
       // json转化为string
-      JSONEncode(json) {
+      JSONEncode: function JSONEncode(json) {
         try {
           return JSON.stringify(json);
         } catch (error) {
           return '';
         }
       },
+
       // 判断类型是否为function
-      isFunction(fn) {
-        let bool = false;
+      isFunction: function isFunction(fn) {
+        var bool = false;
         if (typeof fn === 'function') {
           bool = true;
         }
         return bool;
       },
-      base64Encode(str) {
+      base64Encode: function base64Encode$$(str) {
         return base64Encode(str);
       },
-      sha1(str) {
+      sha1: function sha1(str) {
         return '';
       },
+
       // 对象的字段值截取
-      truncate(obj, length) {
-        let ret;
+      truncate: function truncate(obj, length) {
+        var ret = void 0;
         if (typeof obj === 'string') {
           ret = obj.slice(0, length);
         } else if (_.isArray(obj)) {
@@ -1169,15 +1175,15 @@
         }
         return ret;
       },
-      isNumber(obj) {
+      isNumber: function isNumber(obj) {
         return Object.prototype.toString.call(obj) == '[object Number]';
       },
-      isString(str) {
+      isString: function isString(str) {
         return Object.prototype.toString.call(str) == '[object String]';
       },
-      HTTPBuildQuery(formdata, arg_separator) {
-        let use_val,
-            use_key,
+      HTTPBuildQuery: function HTTPBuildQuery(formdata, arg_separator) {
+        var use_val = void 0,
+            use_key = void 0,
             tmp_arr = [];
 
         if (_.isUndefined(arg_separator)) {
@@ -1192,14 +1198,16 @@
 
         return tmp_arr.join(arg_separator);
       },
+
       // 删除左右两端的空格
-      trim(str) {
+      trim: function trim(str) {
         if (!str) return;
         return str.replace(/(^\s*)|(\s*$)/g, "");
       },
+
       // 验证yyyy-MM-dd日期格式
-      checkTime(timeString) {
-        const reg = /^(\d{4})-(\d{2})-(\d{2})$/;
+      checkTime: function checkTime(timeString) {
+        var reg = /^(\d{4})-(\d{2})-(\d{2})$/;
         if (timeString) {
           if (!reg.test(timeString)) {
             return false;
@@ -1210,15 +1218,16 @@
           return false;
         }
       },
+
       // 返回指定url的域名
       // 若不传入url，返回当前网页的域名
-      getHost(url) {
-        let host = '';
+      getHost: function getHost(url) {
+        var host = '';
         if (!url) {
           url = win.location.href;
         }
-        const regex = /.*\:\/\/([^\/]*).*/;
-        const match = url.match(regex);
+        var regex = /.*\:\/\/([^\/]*).*/;
+        var match = url.match(regex);
         if (match) {
           host = match[1];
         }
@@ -1231,19 +1240,20 @@
 
     // 客户端基本属性
     _.info = {
-      domain(referrer) {
-        const split = referrer.split('/');
+      domain: function domain(referrer) {
+        var split = referrer.split('/');
         if (split.length >= 3) {
           return split[2];
         }
         return '';
       },
+
       // 设备型号
-      deviceModel() {
-        let deviceModel = '';
+      deviceModel: function deviceModel() {
+        var deviceModel = '';
         if (device.android()) {
-          const sss = win.navigator.userAgent.split(";");
-          const i = sss.indexOf("Build/");
+          var sss = win.navigator.userAgent.split(";");
+          var i = sss.indexOf("Build/");
           if (i > -1) {
             deviceModel = sss[i].substring(0, sss[i].indexOf("Build/"));
           }
@@ -1254,8 +1264,8 @@
         }
         return deviceModel;
       },
-      properties() {
-        const windowsOs = {
+      properties: function properties() {
+        var windowsOs = {
           '5.0': 'Win2000',
           '5.1': 'WinXP',
           '5.2': 'Win2003',
@@ -1265,10 +1275,10 @@
           '6.3': 'Win8.1',
           '10.0': 'Win10'
         };
-        const devicePlatform = device.type;
-        const deviceModel = _.trim(this.deviceModel());
-        const isWindows = device.windows();
-        let deviceOsVersion = detector$1.os.name + ' ' + detector$1.os.fullVersion;
+        var devicePlatform = device.type;
+        var deviceModel = _.trim(this.deviceModel());
+        var isWindows = device.windows();
+        var deviceOsVersion = detector$1.os.name + ' ' + detector$1.os.fullVersion;
         if (isWindows) {
           if (windowsOs[detector$1.os.fullVersion]) {
             deviceOsVersion = windowsOs[detector$1.os.fullVersion];
@@ -1314,7 +1324,7 @@
       /**
        * 订阅
        *  */
-      on: function (key, fn) {
+      on: function on(key, fn) {
         if (!this._list) {
           this._list = {};
         }
@@ -1323,7 +1333,7 @@
         }
         this._list[key].push(fn);
       },
-      off: function (key) {
+      off: function off(key) {
         if (!this._list) {
           this._list = {};
         }
@@ -1336,7 +1346,7 @@
       /**
        * 推送
        */
-      trigger: function () {
+      trigger: function trigger() {
         var args = Array.prototype.slice.call(arguments);
         var key = args[0];
         var arrFn = this._list && this._list[key];
@@ -1356,7 +1366,7 @@
       data['_'] = new Date().getTime().toString();
       if (type === 'img') {
         url += '?' + _.HTTPBuildQuery(data);
-        let img = document.createElement('img');
+        var img = document.createElement('img');
         img.src = url;
         img.width = 1;
         img.height = 1;
@@ -1381,7 +1391,7 @@
     };
 
     _.ajax = {
-      post: function (url, options, callback, timeout) {
+      post: function post(url, options, callback, timeout) {
         var that = this;
         that.callback = callback || function (params) {};
         try {
@@ -1406,7 +1416,7 @@
           req.send(_.JSONEncode(options));
         } catch (e) {}
       },
-      get: function (url, callback) {
+      get: function get(url, callback) {
         try {
           var req = new XMLHttpRequest();
           req.open('GET', url, true);
@@ -1432,7 +1442,7 @@
 
     // uuid
     _.UUID = function () {
-      var T = function () {
+      var T = function T() {
         var d = 1 * new Date(),
             i = 0;
         while (d == 1 * new Date()) {
@@ -1440,10 +1450,10 @@
         }
         return d.toString(16) + i.toString(16);
       };
-      var R = function () {
+      var R = function R() {
         return Math.random().toString(16).replace('.', '');
       };
-      var UA = function (n) {
+      var UA = function UA(n) {
         var ua = navigator.userAgent,
             i,
             ch,
@@ -1494,11 +1504,11 @@
 
     // 存储方法封装 localStorage  cookie
     _.localStorage = {
-      error: function (msg) {
+      error: function error(msg) {
         console.error('localStorage error: ' + msg);
       },
 
-      get: function (name) {
+      get: function get(name) {
         try {
           return window.localStorage.getItem(name);
         } catch (err) {
@@ -1507,7 +1517,7 @@
         return null;
       },
 
-      parse: function (name) {
+      parse: function parse(name) {
         try {
           return _.JSONDecode(_.localStorage.get(name)) || {};
         } catch (err) {
@@ -1516,7 +1526,7 @@
         return null;
       },
 
-      set: function (name, value) {
+      set: function set(name, value) {
         try {
           window.localStorage.setItem(name, value);
         } catch (err) {
@@ -1524,7 +1534,7 @@
         }
       },
 
-      remove: function (name) {
+      remove: function remove(name) {
         try {
           window.localStorage.removeItem(name);
         } catch (err) {
@@ -1533,7 +1543,7 @@
       }
     };
     _.cookie = {
-      get: function (name) {
+      get: function get(name) {
         var nameEQ = name + '=';
         var ca = document.cookie.split(';');
         for (var i = 0; i < ca.length; i++) {
@@ -1548,7 +1558,7 @@
         return null;
       },
 
-      parse: function (name) {
+      parse: function parse(name) {
         var cookie;
         try {
           cookie = _.JSONDecode(_.cookie.get(name)) || {};
@@ -1558,7 +1568,7 @@
         return cookie;
       },
 
-      set_seconds: function (name, value, seconds, cross_subdomain, is_secure) {
+      set_seconds: function set_seconds(name, value, seconds, cross_subdomain, is_secure) {
         var cdomain = '',
             expires = '',
             secure = '';
@@ -1583,7 +1593,7 @@
         document.cookie = name + '=' + encodeURIComponent(value) + expires + '; path=/' + cdomain + secure;
       },
 
-      set: function (name, value, days, cross_subdomain, is_secure) {
+      set: function set(name, value, days, cross_subdomain, is_secure) {
         var cdomain = '',
             expires = '',
             secure = '';
@@ -1610,15 +1620,15 @@
         return new_cookie_val;
       },
 
-      remove: function (name, cross_subdomain) {
+      remove: function remove(name, cross_subdomain) {
         _.cookie.set(name, '', -1, cross_subdomain);
       }
     };
 
-    const windowConsole = win.console;
-    const console = {
+    var windowConsole = win.console;
+    var console = {
       /** @type {function(...[*])} */
-      log: function () {
+      log: function log() {
         if (Config.DEBUG && !_.isUndefined(windowConsole) && windowConsole) {
           try {
             windowConsole.log.apply(windowConsole, arguments);
@@ -1630,7 +1640,7 @@
         }
       },
       /** @type {function(...[*])} */
-      error: function () {
+      error: function error() {
         if (Config.DEBUG && !_.isUndefined(windowConsole) && windowConsole) {
           var args = ['DATracker error:'].concat(_.toArray(arguments));
           try {
@@ -1644,8 +1654,14 @@
       }
     };
 
-    class USER_TRACK {
-      constructor(instance) {
+    var _createClass$2 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+    function _classCallCheck$2(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+    var USER_TRACK = function () {
+      function USER_TRACK(instance) {
+        _classCallCheck$2(this, USER_TRACK);
+
         this.instance = instance;
         this['local_storage'] = this.instance['local_storage'];
       }
@@ -1653,86 +1669,107 @@
        * 检测设置的属性是否为系统保留属性
        * @param {String} prop 
        */
-      _is_reserved_property(prop) {
-        return PEOPLE_RESERVED_PROPERTY.indexOf('prop') > -1;
-      }
-      /**
-       * 上报用户属性数据
-       * @param {Object} properties 
-       * @param {Function} callback 
-       */
-      _send_request(properties, callback) {
-        if (!_.isFunction(callback)) {
-          callback = function () {};
+
+
+      _createClass$2(USER_TRACK, [{
+        key: '_is_reserved_property',
+        value: function _is_reserved_property(prop) {
+          return PEOPLE_RESERVED_PROPERTY.indexOf('prop') > -1;
         }
+        /**
+         * 上报用户属性数据
+         * @param {Object} properties 
+         * @param {Function} callback 
+         */
 
-        properties = properties || {};
+      }, {
+        key: '_send_request',
+        value: function _send_request(properties, callback) {
+          if (!_.isFunction(callback)) {
+            callback = function callback() {};
+          }
 
-        let data = {
-          dataType: SYSTEM_EVENT_TYPE,
-          // 客户端唯一凭证(设备凭证)
-          deviceId: this.instance.get_device_id(),
-          userId: this.instance.get_property('user_id'),
-          // 上报时间
-          time: new Date().getTime(),
-          // sdk类型 （js，小程序、安卓、IOS、server、pc）
-          sdkType: 'js',
-          // 属性事件id
-          eventId: PEOPLE_PROPERTY_ID,
-          // 用户首次访问时间
-          persistedTime: this.instance.get_property('persistedTime'),
-          // 页面打开场景, 默认 Browser
-          pageOpenScene: 'Browser',
-          // 自定义用户属性
-          attributes: properties
-        };
+          properties = properties || {};
 
-        // 上报数据对象字段截取
-        const truncateLength = this.instance._get_config('truncateLength');
-        let truncated_data = data;
-        if (_.isNumber(truncateLength) && truncateLength > 0) {
-          truncated_data = _.truncate(data, truncateLength);
+          var data = {
+            dataType: SYSTEM_EVENT_TYPE,
+            // 客户端唯一凭证(设备凭证)
+            deviceId: this.instance.get_device_id(),
+            userId: this.instance.get_property('user_id'),
+            // 上报时间
+            time: new Date().getTime(),
+            // sdk类型 （js，小程序、安卓、IOS、server、pc）
+            sdkType: 'js',
+            // 属性事件id
+            eventId: PEOPLE_PROPERTY_ID,
+            // 用户首次访问时间
+            persistedTime: this.instance.get_property('persistedTime'),
+            // 页面打开场景, 默认 Browser
+            pageOpenScene: 'Browser',
+            // 自定义用户属性
+            attributes: properties
+          };
+
+          // 上报数据对象字段截取
+          var truncateLength = this.instance._get_config('truncateLength');
+          var truncated_data = data;
+          if (_.isNumber(truncateLength) && truncateLength > 0) {
+            truncated_data = _.truncate(data, truncateLength);
+          }
+          var callback_fn = function callback_fn(response) {
+            callback(response, data);
+          };
+          var url = this.instance._get_config('track_url');
+
+          // 数据上报方式
+          var track_type = this.instance._get_config('track_type');
+          if (track_type === 'img') {
+            url += 'track.gif';
+          }
+          _.sendRequest(url, track_type, { data: _.base64Encode(_.JSONEncode(truncated_data)), token: this.instance._get_config('token') }, callback_fn);
         }
-        const callback_fn = response => {
-          callback(response, data);
-        };
-        let url = this.instance._get_config('track_url');
+        /**
+         * 设置用户属性
+         * @param {*} prop 
+         * @param {*} to 
+         * @param {*} callback 
+         */
 
-        // 数据上报方式
-        const track_type = this.instance._get_config('track_type');
-        if (track_type === 'img') {
-          url += 'track.gif';
-        }
-        _.sendRequest(url, track_type, { data: _.base64Encode(_.JSONEncode(truncated_data)), token: this.instance._get_config('token') }, callback_fn);
-      }
-      /**
-       * 设置用户属性
-       * @param {*} prop 
-       * @param {*} to 
-       * @param {*} callback 
-       */
-      set(prop, to, callback) {
-        let set_props = {};
-        if (_.isObject(prop)) {
-          _.each(prop, (v, k) => {
-            // 不是系统保留属性
-            if (!this._is_reserved_property(k)) {
-              set_props[k] = v;
-            }
-          });
-          callback = to;
-        } else {
-          set_props[prop] = to;
-        }
-        return this._send_request(set_props, callback);
-      }
-    }
+      }, {
+        key: 'set',
+        value: function set(prop, to, callback) {
+          var _this = this;
 
-    class EVENT_TRACK {
-      constructor(instance) {
+          var set_props = {};
+          if (_.isObject(prop)) {
+            _.each(prop, function (v, k) {
+              // 不是系统保留属性
+              if (!_this._is_reserved_property(k)) {
+                set_props[k] = v;
+              }
+            });
+            callback = to;
+          } else {
+            set_props[prop] = to;
+          }
+          return this._send_request(set_props, callback);
+        }
+      }]);
+
+      return USER_TRACK;
+    }();
+
+    var _createClass$3 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+    function _classCallCheck$3(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+    var EVENT_TRACK = function () {
+      function EVENT_TRACK(instance) {
+        _classCallCheck$3(this, EVENT_TRACK);
+
         this.instance = instance;
         this['local_storage'] = this.instance['local_storage'];
-        // 初始化时间
+        // 初始化时间(事件相关)
         this['local_storage'].register_once({
           updatedTime: 0,
           sessionStartTime: 0
@@ -1746,279 +1783,355 @@
        *
        * 判断是否为其它渠道
        */
-      _check_channel() {
-        const referrer = this.instance.get_property('sessionReferrer');
-        let is_other_channel = false;
-        // 若本地缓存的referrer 的host跟当前页不一样，那么可以确定是其它渠道进来的
-        if (_.getHost(referrer) !== window.location.host) {
-          is_other_channel = true;
-        }
-        return is_other_channel;
-      }
-      /**
-       * TODO
-       * 判断指定事件是否被禁止上报
-       * @param {String} event_name
-       * @returns {Boolean} 
-       */
-      _event_is_disabled(event_name) {
-        return false;
-      }
-      /**
-       * 打开新会话
-       */
-      _start_new_session() {
-        this['local_storage'].register({
-          sessionUuid: _.UUID(),
-          sessionStartTime: new Date().getTime()
-        });
-        this.track('smart_session_start');
-      }
-      /**
-       * TODO
-       * 关闭当前会话
-       */
-      _close_cur_session() {
-        /*
-         为了便于绘制用户事件发生轨迹图，区分会话close和最后一次事件触发时间的顺序，会话关闭时间需要做些微调
-         1. 如果本地拿到了上次（非会话事件）事件的触发时间，time = this.instance.get_property('LASTEVENT').time + 1;
-         2. 如果未拿到，time = new Date().getTime() - 1;
-        */
-        let time = new Date().getTime() - 1;
-        const sessionStartTime = this.instance.get_property('sessionStartTime');
-        const LASTEVENT = this.instance.get_property('LASTEVENT');
-        if (LASTEVENT && LASTEVENT.time) {
-          time = LASTEVENT.time + 1;
-        }
-        const sessionTotalLength = time - sessionStartTime;
-        if (sessionTotalLength >= 0) {
-          this.track('smart_session_close', {
-            sessionCloseTime: time,
-            sessionTotalLength: sessionTotalLength
-          });
-        }
-      }
-      /**
-       * 判断会话重新开启
-       * 判断条件：会话首次开始、指定的一段时间内用户无事件操作、其它渠道进来
-      */
-      _session(callback) {
-        const session_start_time = 1 * this.instance.get_property('sessionStartTime') / 1000;
-        const updated_time = 1 * this.instance.get_property('updatedTime') / 1000;
-        const now_date_time_ms = new Date().getTime();
-        const now_date_time_se = 1 * now_date_time_ms / 1000;
-        // 其它渠道判断
-        const other_channel_Bool = this._check_channel();
-        //会话结束判断
-        if (session_start_time === 0 || now_date_time_se > updated_time + 60 * this.instance._get_config('session_interval_mins') || other_channel_Bool) {
-          // 当会话首次开始时，不用发送会话关闭事件
-          if (session_start_time === 0) {
-            // 新打开一个会话
-            this._start_new_session();
-          } else {
-            this._close_cur_session();
-            this._start_new_session();
+
+
+      _createClass$3(EVENT_TRACK, [{
+        key: '_check_channel',
+        value: function _check_channel() {
+          var referrer = this.instance.get_property('sessionReferrer');
+          var is_other_channel = false;
+          // 若本地缓存的referrer 的host跟当前页不一样，那么可以确定是其它渠道进来的
+          if (_.getHost(referrer) !== window.location.host) {
+            is_other_channel = true;
           }
+          return is_other_channel;
         }
-        // 更新本地的最后事件操作时间
-        this['local_storage'].register({
-          updatedTime: now_date_time_ms
-        });
-        // 执行回调方法
-        if (_.isFunction(callback)) {
-          callback();
-        }
-      }
-      /**
-       * 设置一个指定事件的耗时监听器
-       * @param {String} event_name
-       */
-      time_event(event_name) {
-        if (_.isUndefined(event_name)) {
-          console.error('事件耗时监听器需要一个事件名称');
-          return;
-        }
-        // 被禁止的事件，无需监听
-        if (this._event_is_disabled(event_name)) {
-          return;
-        }
-        this['local_storage'].set_event_timer(event_name, new Date().getTime());
-      }
-      /**
-       * 发送PV事件，在此之前检测session
-       * @param {Object} properties  pv属性
-       * @param {*} callback 
-       */
-      track_pv(properties, callback) {
-        this._session(() => {
-          this.track('smart_pv', _.extend({}, properties), callback);
-        });
-      }
-      /**
-       * 追踪事件（上报用户事件触发数据）
-       * @param {String} event_name 事件名称（必须）
-       * @param {Object} properties 事件属性
-       * @param {Function} callback 上报后的回调方法
-       * @param {String} event_type 自定义事件类型
-       * @returns {Object} track_data 上报的数据
-       */
-      track(event_name, properties, callback, event_type) {
-        if (_.isUndefined(event_name)) {
-          console.error('上报数据需要一个事件名称');
-          return;
-        }
-        if (!_.isFunction(callback)) {
-          callback = function () {};
-        }
-        if (this._event_is_disabled(event_name)) {
-          callback(0);
-          return;
-        }
-        // 重新在本地取数据读取到缓存
-        this['local_storage'].load();
-        // 事件属性
-        properties = properties || {};
-        // 标记：传入的属性另存一份
-        let user_set_properties = _.JSONDecode(_.JSONEncode(properties)) || {};
-        let costTime;
-        // 移除该事件的耗时监听器，获取设置监听器的时间戳，计算耗时
-        const start_listen_timestamp = this['local_storage'].remove_event_timer(event_name);
-        if (!_.isUndefined(start_listen_timestamp)) {
-          costTime = new Date().getTime() - start_listen_timestamp;
-        }
-        // 事件类型设置
-        let data_type = BUSSINESS_EVENT_TYPE;
-        // 事件类型设置为传入了自定义事件类型
-        if (event_type) {
-          data_type = event_type;
-        } else
-          // 如果是内置事件,事件类型重新设置
-          if (SYSTEM_EVENT_OBJECT[event_name]) {
-            data_type = SYSTEM_EVENT_OBJECT[event_name].data_type;
-          }
+        /**
+         * TODO
+         * 判断指定事件是否被禁止上报
+         * @param {String} event_name
+         * @returns {Boolean} 
+         */
 
-        // 事件触发时间
-        let time = new Date().getTime();
-        // 会话有时间差
-        // 触发的事件若是会话结束，触发时间要重新设置
-        // 若事件id为会话关闭，需要删除传入的自定义属性
-        if (event_name === 'smart_session_close') {
-          time = properties.sessionCloseTime;
-          delete user_set_properties['sessionCloseTime'];
-          delete user_set_properties['sessionTotalLength'];
+      }, {
+        key: '_event_is_disabled',
+        value: function _event_is_disabled(event_name) {
+          return false;
         }
+        /**
+         * 打开新会话
+         */
 
-        // 设置通用的事件属性
-        user_set_properties = _.extend({}, this.instance.get_property('superProperties'), user_set_properties);
-
-        // 上报数据
-        let data = {
-          dataType: data_type,
-          userId: this.instance.get_property('user_id'),
-          // sdk类型 （js，小程序、安卓、IOS、server、pc）
-          sdkType: 'js',
-          sdkVersion: CONFIG.LIB_VERSION,
-          // 事件名称
-          eventId: event_name,
-          // 事件触发时间
-          time: time,
-          // 用户首次访问时间
-          persistedTime: this.instance.get_property('persistedTime'),
-          // 客户端唯一凭证(设备凭证)
-          deviceId: this.instance.get_device_id(),
-          // 页面打开场景, 默认 Browser
-          pageOpenScene: 'Browser',
-          // 应用凭证
-          token: this.instance._get_config('token'),
-          costTime: costTime,
-          // 当前关闭的会话时长
-          sessionTotalLength: properties.sessionTotalLength,
-          // 当前会话id
-          sessionUuid: this.instance.get_property('sessionUuid'),
-          // 事件自定义属性
-          attributes: user_set_properties
-        };
-        // 合并客户端信息
-        data = Object.assign({}, data, _.info.properties());
-
-        //只有已访问页面后，sessionReferrer 重置
-        //如果不是内置事件，那么 sessionReferrer 重置
-        //如果是'da_activate'，那么 sessionReferrer 重置
-        //解决referrer 当是外链时，此时触发自定义事件，引起重启一个session问题。
-        if (data_type === BUSSINESS_EVENT_TYPE) {
-          // 其它渠道
-          if (this._check_channel()) {
-            this['local_storage'].register({
-              sessionReferrer: document.location.href
-            });
-          }
-        }
-        if (!this.instance._get_config('SPA').is) {
-          if (['smart_activate', 'smart_session_close'].indexOf(event_name) > 0) {
-            this['local_storage'].register({
-              sessionReferrer: document.location.href
-            });
-          }
-        }
-
-        // 当启动单页面后，切换页面，refer为空，此时做处理
-        if (this.instance._get_config('SPA').is) {
-          const sessionReferrer = this.instance.get_property('sessionReferrer');
-          if (sessionReferrer !== data['referrer']) {
-            data['referrer'] = sessionReferrer;
-            data['referringDomain'] = _.info.domain(sessionReferrer);
-          }
-        }
-
-        // 上报数据对象字段截取
-        const truncateLength = this.instance._get_config('truncateLength');
-        let truncated_data = data;
-        if (_.isNumber(truncateLength) && truncateLength > 0) {
-          truncated_data = _.truncate(data, truncateLength);
-        }
-        const callback_fn = response => {
-          callback(response, data);
-        };
-        let url = this.instance._get_config('track_url');
-        const track_type = this.instance._get_config('track_type');
-        if (track_type === 'img') {
-          url += 'track.gif';
-        }
-        _.sendRequest(url, track_type, { data: _.base64Encode(_.JSONEncode(truncated_data)), token: this.instance._get_config('token') }, callback_fn);
-
-        // 当触发的事件不是这些事件(smart_session_start,smart_session_close,smart_activate)时，触发检测 session 方法
-        if (['smart_session_start', 'smart_session_close', 'smart_activate'].indexOf(event_name) === -1) {
-          this._session();
-        }
-
-        // 保存最后一次用户触发事件（除了会话事件以外）的事件id以及时间，通过这个时间确定会话关闭时的时间
-        if (['smart_session_start', 'smart_session_close'].indexOf(event_name) === -1) {
+      }, {
+        key: '_start_new_session',
+        value: function _start_new_session() {
           this['local_storage'].register({
-            LASTEVENT: {
-              eventId: event_name,
-              time: time
+            sessionUuid: _.UUID(),
+            sessionStartTime: new Date().getTime()
+          });
+          this.track('smart_session_start');
+        }
+        /**
+         * TODO
+         * 关闭当前会话
+         */
+
+      }, {
+        key: '_close_cur_session',
+        value: function _close_cur_session() {
+          /*
+           为了便于绘制用户事件发生轨迹图，区分会话close和最后一次事件触发时间的顺序，会话关闭时间需要做些微调
+           1. 如果本地拿到了上次（非会话事件）事件的触发时间，time = this.instance.get_property('LASTEVENT').time + 1;
+           2. 如果未拿到，time = new Date().getTime() - 1;
+          */
+          var time = new Date().getTime() - 1;
+          var sessionStartTime = this.instance.get_property('sessionStartTime');
+          var LASTEVENT = this.instance.get_property('LASTEVENT');
+          if (LASTEVENT && LASTEVENT.time) {
+            time = LASTEVENT.time + 1;
+          }
+          var sessionTotalLength = time - sessionStartTime;
+          if (sessionTotalLength >= 0) {
+            this.track('smart_session_close', {
+              sessionCloseTime: time,
+              sessionTotalLength: sessionTotalLength
+            });
+          }
+        }
+        /**
+         * 判断会话重新开启
+         * 判断条件：会话首次开始、指定的一段时间内用户无事件操作、其它渠道进来
+        */
+
+      }, {
+        key: '_session',
+        value: function _session(callback) {
+          var session_start_time = 1 * this.instance.get_property('sessionStartTime') / 1000;
+          var updated_time = 1 * this.instance.get_property('updatedTime') / 1000;
+          var now_date_time_ms = new Date().getTime();
+          var now_date_time_se = 1 * now_date_time_ms / 1000;
+          // 其它渠道判断
+          var other_channel_Bool = this._check_channel();
+          //会话结束判断
+          if (session_start_time === 0 || now_date_time_se > updated_time + 60 * this.instance._get_config('session_interval_mins') || other_channel_Bool) {
+            // 当会话首次开始时，不用发送会话关闭事件
+            if (session_start_time === 0) {
+              // 新打开一个会话
+              this._start_new_session();
+            } else {
+              this._close_cur_session();
+              this._start_new_session();
             }
+          }
+          // 更新本地的最后事件操作时间
+          this['local_storage'].register({
+            updatedTime: now_date_time_ms
+          });
+          // 执行回调方法
+          if (_.isFunction(callback)) {
+            callback();
+          }
+        }
+        /**
+         * 用户注册
+         * @param {String} user_id 
+         */
+
+      }, {
+        key: '_signup',
+        value: function _signup(user_id) {
+          // 默认是空值,若有值则调用退出
+          var anonymous_id = this.instance.get_property('userId');
+          if (anonymous_id !== user_id) {
+            if (anonymous_id) {
+              this.logout();
+            }
+            this.track('smart_u_signup', {
+              anonymousId: anonymous_id,
+              newUserId: user_id
+            });
+          }
+        }
+        /**
+         * 设置一个指定事件的耗时监听器
+         * @param {String} event_name
+         */
+
+      }, {
+        key: 'time_event',
+        value: function time_event(event_name) {
+          if (_.isUndefined(event_name)) {
+            console.error('事件耗时监听器需要一个事件名称');
+            return;
+          }
+          // 被禁止的事件，无需监听
+          if (this._event_is_disabled(event_name)) {
+            return;
+          }
+          this['local_storage'].set_event_timer(event_name, new Date().getTime());
+        }
+        /**
+         * 发送PV事件，在此之前检测session
+         * @param {Object} properties  pv属性
+         * @param {*} callback 
+         */
+
+      }, {
+        key: 'track_pv',
+        value: function track_pv(properties, callback) {
+          var _this = this;
+
+          this._session(function () {
+            _this.track('smart_pv', _.extend({}, properties), callback);
           });
         }
-      }
-    }
+        /**
+         * 追踪事件（上报用户事件触发数据）
+         * @param {String} event_name 事件名称（必须）
+         * @param {Object} properties 事件属性
+         * @param {Function} callback 上报后的回调方法
+         * @param {String} event_type 自定义事件类型
+         * @returns {Object} track_data 上报的数据
+         */
 
-    class LOCAL_STORAGE {
+      }, {
+        key: 'track',
+        value: function track(event_name, properties, callback, event_type) {
+          if (_.isUndefined(event_name)) {
+            console.error('上报数据需要一个事件名称');
+            return;
+          }
+          if (!_.isFunction(callback)) {
+            callback = function callback() {};
+          }
+          if (this._event_is_disabled(event_name)) {
+            callback(0);
+            return;
+          }
+          // 重新在本地取数据读取到缓存
+          this['local_storage'].load();
+          // 事件属性
+          properties = properties || {};
+          // 标记：传入的属性另存一份
+          var user_set_properties = _.JSONDecode(_.JSONEncode(properties)) || {};
+          var costTime = void 0;
+          // 移除该事件的耗时监听器，获取设置监听器的时间戳，计算耗时
+          var start_listen_timestamp = this['local_storage'].remove_event_timer(event_name);
+          if (!_.isUndefined(start_listen_timestamp)) {
+            costTime = new Date().getTime() - start_listen_timestamp;
+          }
+          // 事件类型设置
+          var data_type = BUSSINESS_EVENT_TYPE;
+          // 事件类型设置为传入了自定义事件类型
+          if (event_type) {
+            data_type = event_type;
+          } else
+            // 如果是内置事件,事件类型重新设置
+            if (SYSTEM_EVENT_OBJECT[event_name]) {
+              data_type = SYSTEM_EVENT_OBJECT[event_name].data_type;
+            }
+
+          // 事件触发时间
+          var time = new Date().getTime();
+          // 会话有时间差
+          // 触发的事件若是会话结束，触发时间要重新设置
+          // 若事件id为会话关闭，需要删除传入的自定义属性
+          if (event_name === 'smart_session_close') {
+            time = properties.sessionCloseTime;
+            delete user_set_properties['sessionCloseTime'];
+            delete user_set_properties['sessionTotalLength'];
+          }
+
+          // 设置通用的事件属性
+          user_set_properties = _.extend({}, this.instance.get_property('superProperties'), user_set_properties);
+
+          // 上报数据
+          var data = {
+            dataType: data_type,
+            userId: this.instance.get_property('userId'),
+            // sdk类型 （js，小程序、安卓、IOS、server、pc）
+            sdkType: 'js',
+            sdkVersion: CONFIG.LIB_VERSION,
+            // 事件名称
+            eventId: event_name,
+            // 事件触发时间
+            time: time,
+            // 用户首次访问时间
+            persistedTime: this.instance.get_property('persistedTime'),
+            // 客户端唯一凭证(设备凭证)
+            deviceId: this.instance.get_device_id(),
+            // 页面打开场景, 默认 Browser
+            pageOpenScene: 'Browser',
+            // 应用凭证
+            token: this.instance._get_config('token'),
+            costTime: costTime,
+            // 当前关闭的会话时长
+            sessionTotalLength: properties.sessionTotalLength,
+            // 当前会话id
+            sessionUuid: this.instance.get_property('sessionUuid'),
+            // 事件自定义属性
+            attributes: user_set_properties
+          };
+          // 合并客户端信息
+          data = Object.assign({}, data, _.info.properties());
+
+          //只有已访问页面后，sessionReferrer 重置
+          //如果不是内置事件，那么 sessionReferrer 重置
+          //如果是'da_activate'，那么 sessionReferrer 重置
+          //解决referrer 当是外链时，此时触发自定义事件，引起重启一个session问题。
+          if (data_type === BUSSINESS_EVENT_TYPE) {
+            // 其它渠道
+            if (this._check_channel()) {
+              this['local_storage'].register({
+                sessionReferrer: document.location.href
+              });
+            }
+          }
+          if (!this.instance._get_config('SPA').is) {
+            if (['smart_activate', 'smart_session_close'].indexOf(event_name) > 0) {
+              this['local_storage'].register({
+                sessionReferrer: document.location.href
+              });
+            }
+          }
+
+          // 当启动单页面后，切换页面，refer为空，此时做处理
+          if (this.instance._get_config('SPA').is) {
+            var sessionReferrer = this.instance.get_property('sessionReferrer');
+            if (sessionReferrer !== data['referrer']) {
+              data['referrer'] = sessionReferrer;
+              data['referringDomain'] = _.info.domain(sessionReferrer);
+            }
+          }
+
+          // 上报数据对象字段截取
+          var truncateLength = this.instance._get_config('truncateLength');
+          var truncated_data = data;
+          if (_.isNumber(truncateLength) && truncateLength > 0) {
+            truncated_data = _.truncate(data, truncateLength);
+          }
+          var callback_fn = function callback_fn(response) {
+            callback(response, data);
+          };
+          var url = this.instance._get_config('track_url');
+          var track_type = this.instance._get_config('track_type');
+          if (track_type === 'img') {
+            url += 'track.gif';
+          }
+          _.sendRequest(url, track_type, { data: _.base64Encode(_.JSONEncode(truncated_data)), token: this.instance._get_config('token') }, callback_fn);
+
+          // 当触发的事件不是这些事件(smart_session_start,smart_session_close,smart_activate)时，触发检测 session 方法
+          if (['smart_session_start', 'smart_session_close', 'smart_activate'].indexOf(event_name) === -1) {
+            this._session();
+          }
+
+          // 保存最后一次用户触发事件（除了会话事件以外）的事件id以及时间，通过这个时间确定会话关闭时的时间
+          if (['smart_session_start', 'smart_session_close'].indexOf(event_name) === -1) {
+            this['local_storage'].register({
+              LASTEVENT: {
+                eventId: event_name,
+                time: time
+              }
+            });
+          }
+        }
+        /**
+         * 用户登录和注册时调用
+         * @param {String} user_id 
+         */
+
+      }, {
+        key: 'login',
+        value: function login(user_id) {
+          this._signup(user_id);
+          this['local_storage'].register({ 'userId': user_id });
+          this.track('smart_u_login');
+        }
+        // 清除本地用户信息，退出用户（选则调用）
+
+      }, {
+        key: 'logout',
+        value: function logout() {
+          this['local_storage'].unregister('userId');
+          this.track('smart_u_logout');
+        }
+      }]);
+
+      return EVENT_TRACK;
+    }();
+
+    var _createClass$4 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+    function _classCallCheck$4(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+    var LOCAL_STORAGE = function () {
       /**
        * 
        * @param {Object} config
        */
-      constructor(config) {
-        const local_storage = config['local_storage'];
+      function LOCAL_STORAGE(config) {
+        _classCallCheck$4(this, LOCAL_STORAGE);
+
+        var local_storage = config['local_storage'];
         if (_.isObject(local_storage)) {
           this['name'] = local_storage['name'] || 'smart_' + config['token'] + '_sdk';
-          let storage_type = local_storage['type'] || 'cookie';
+          var storage_type = local_storage['type'] || 'cookie';
 
           // 判断是否支持 localStorage
-          const localStorage_supported = () => {
-            let supported = true;
+          var localStorage_supported = function localStorage_supported() {
+            var supported = true;
             try {
-              let key = '__smartssupport__',
+              var key = '__smartssupport__',
                   val = 'smart_web_data_sdk';
               _.localStorage.set(key, val);
               if (_.localStorage.get(key) !== val) {
@@ -2050,175 +2163,223 @@
         }
       }
       // 加载本地存储信息
-      load() {
-        const localData = this['storage'].parse(this['name']);
-        if (localData) {
-          this['props'] = _.extend({}, localData);
-        }
-      }
-      // 更新配置信息
-      update_config(localStorageConfig) {
-        // 到期时间(cookie存储设置有效)
-        this.default_expiry = this.expire_days = localStorageConfig['cookie_expiration'];
-        this.set_disabled(localStorageConfig['disable']);
-        this.set_cross_subdomain(localStorageConfig['cross_subdomain_cookie']);
-        this.set_secure(localStorageConfig['secure_cookie']);
-      }
-      // 设置关闭本地保存操作，设置为关闭后，本地数据移除
-      set_disabled(disabled) {
-        this.disabled = disabled;
-        if (this.disabled) {
-          this.remove();
-        }
-      }
-      // 移除本地数据
-      remove() {
-        // cookie存储时，移除二级域以及子域下的cookie,此时参数有两个
-        this.storage.remove(this.name, false);
-        this.storage.remove(this.name, true);
-      }
-      // 清除存储的数据
-      clear() {
-        this.remove();
-        this['props'] = {};
-      }
-      /**
-       * 跨子域设置,cookie存储方式下有效
-       * @param {Boolean} cross_subdomain 
-       */
-      set_cross_subdomain(cross_subdomain) {
-        if (cross_subdomain !== this.cross_subdomain) {
-          this.cross_subdomain = cross_subdomain;
-          this.remove();
-          this.save();
-        }
-      }
-      /**
-       * cookie存储方式下有效
-       * cookie存储时，采用安全的方式存储数据，调用该方法后，重新保存数据
-       * 当secure属性设置为true时，cookie只有在https协议下才能上传到服务器，
-       * 而在http协议下是没法上传的，所以也不会被窃听
-       * @param {Boolean} secure 
-       */
-      set_secure(secure) {
-        if (secure !== this.secure) {
-          this.secure = secure ? true : false;
-          this.remove();
-          this.save();
-        }
-      }
-      // sdk升级，旧的sdk存储数据移到新的sdk存储数据中，然后删除旧的存储数据（暂不实现）
-      // 存储方式改变，改为cookie切换到 localStorage
-      upgrade(config) {
-        let old_cookie;
-        if (this.storage === _.localStorage) {
-          old_cookie = _.cookie.parse(this.name);
-          _.cookie.remove(this.name);
-          _.cookie.remove(this.name, true);
 
-          if (old_cookie) {
-            this.register_once(old_cookie);
+
+      _createClass$4(LOCAL_STORAGE, [{
+        key: 'load',
+        value: function load() {
+          var localData = this['storage'].parse(this['name']);
+          if (localData) {
+            this['props'] = _.extend({}, localData);
           }
         }
-      }
-      // 数据保存到本地
-      save() {
-        // disabled配置为true, 数据不保存到本地
-        if (this.disabled) {
-          return;
-        }
-        this.storage.set(this['name'], _.JSONEncode(this['props']), this.expire_days, this.cross_subdomain, this.secure);
-      }
-      /**
-       * 缓存指定的数据，同时将该数据保存到本地
-       * @param {Object} props 
-       * @param {Number} days
-       * @returns {Boolean} 返回true表示成功
-       */
-      register(props, days) {
-        if (_.isObject(props)) {
-          this.expire_days = typeof days === 'undefined' ? this.default_expiry : day;
-          _.extend(this['props'], props);
-          this.save();
-          return true;
-        }
-        return false;
-      }
-      /**
-       * 只缓存一次指定的数据，下次设置该数据时不会覆盖前一次数据
-       * 若想更新已设置的属性值，那么default_value参数值要等于本地缓存数据中需重置的属性的值(默认值)
-       * this['props'][prop] === default_value   prop为需更新的属性
-       * @param {Object} props
-       * @param {*} default_value
-       * @param {Number} days
-       * @returns {Boolean} 返回true表示成功
-       */
-      register_once(props, default_value, days) {
-        if (_.isObject(props)) {
-          if (typeof default_value === 'undefined') {
-            default_value = 'None';
-          }
-          this.expire_days = typeof days === 'undefined' ? this.default_expiry : day;
+        // 更新配置信息
 
-          _.each(props, function (val, prop) {
-            if (!this['props'][prop] || this['props'][prop] === default_value) {
-              this['props'][prop] = val;
+      }, {
+        key: 'update_config',
+        value: function update_config(localStorageConfig) {
+          // 到期时间(cookie存储设置有效)
+          this.default_expiry = this.expire_days = localStorageConfig['cookie_expiration'];
+          this.set_disabled(localStorageConfig['disable']);
+          this.set_cross_subdomain(localStorageConfig['cross_subdomain_cookie']);
+          this.set_secure(localStorageConfig['secure_cookie']);
+        }
+        // 设置关闭本地保存操作，设置为关闭后，本地数据移除
+
+      }, {
+        key: 'set_disabled',
+        value: function set_disabled(disabled) {
+          this.disabled = disabled;
+          if (this.disabled) {
+            this.remove();
+          }
+        }
+        // 移除本地数据
+
+      }, {
+        key: 'remove',
+        value: function remove() {
+          // cookie存储时，移除二级域以及子域下的cookie,此时参数有两个
+          this.storage.remove(this.name, false);
+          this.storage.remove(this.name, true);
+        }
+        // 清除存储的数据
+
+      }, {
+        key: 'clear',
+        value: function clear() {
+          this.remove();
+          this['props'] = {};
+        }
+        /**
+         * 跨子域设置,cookie存储方式下有效
+         * @param {Boolean} cross_subdomain 
+         */
+
+      }, {
+        key: 'set_cross_subdomain',
+        value: function set_cross_subdomain(cross_subdomain) {
+          if (cross_subdomain !== this.cross_subdomain) {
+            this.cross_subdomain = cross_subdomain;
+            this.remove();
+            this.save();
+          }
+        }
+        /**
+         * cookie存储方式下有效
+         * cookie存储时，采用安全的方式存储数据，调用该方法后，重新保存数据
+         * 当secure属性设置为true时，cookie只有在https协议下才能上传到服务器，
+         * 而在http协议下是没法上传的，所以也不会被窃听
+         * @param {Boolean} secure 
+         */
+
+      }, {
+        key: 'set_secure',
+        value: function set_secure(secure) {
+          if (secure !== this.secure) {
+            this.secure = secure ? true : false;
+            this.remove();
+            this.save();
+          }
+        }
+        // sdk升级，旧的sdk存储数据移到新的sdk存储数据中，然后删除旧的存储数据（暂不实现）
+        // 存储方式改变，改为cookie切换到 localStorage
+
+      }, {
+        key: 'upgrade',
+        value: function upgrade(config) {
+          var old_cookie = void 0;
+          if (this.storage === _.localStorage) {
+            old_cookie = _.cookie.parse(this.name);
+            _.cookie.remove(this.name);
+            _.cookie.remove(this.name, true);
+
+            if (old_cookie) {
+              this.register_once(old_cookie);
             }
-          }, this);
+          }
+        }
+        // 数据保存到本地
 
-          this.save();
-          return true;
+      }, {
+        key: 'save',
+        value: function save() {
+          // disabled配置为true, 数据不保存到本地
+          if (this.disabled) {
+            return;
+          }
+          this.storage.set(this['name'], _.JSONEncode(this['props']), this.expire_days, this.cross_subdomain, this.secure);
         }
-        return false;
-      }
-      /**
-       * 移除指定的缓存数据，同时也清除本地的对应数据
-       * @param {*} prp
-       */
-      unregister(prp) {
-        if (prp in this['prop']) {
-          delete this['props'][prop];
+        /**
+         * 缓存指定的数据，同时将该数据保存到本地
+         * @param {Object} props 
+         * @param {Number} days
+         * @returns {Boolean} 返回true表示成功
+         */
+
+      }, {
+        key: 'register',
+        value: function register(props, days) {
+          if (_.isObject(props)) {
+            this.expire_days = typeof days === 'undefined' ? this.default_expiry : day;
+            _.extend(this['props'], props);
+            this.save();
+            return true;
+          }
+          return false;
+        }
+        /**
+         * 只缓存一次指定的数据，下次设置该数据时不会覆盖前一次数据
+         * 若想更新已设置的属性值，那么default_value参数值要等于本地缓存数据中需重置的属性的值(默认值)
+         * this['props'][prop] === default_value   prop为需更新的属性
+         * @param {Object} props
+         * @param {*} default_value
+         * @param {Number} days
+         * @returns {Boolean} 返回true表示成功
+         */
+
+      }, {
+        key: 'register_once',
+        value: function register_once(props, default_value, days) {
+          if (_.isObject(props)) {
+            if (typeof default_value === 'undefined') {
+              default_value = 'None';
+            }
+            this.expire_days = typeof days === 'undefined' ? this.default_expiry : day;
+
+            _.each(props, function (val, prop) {
+              if (!this['props'][prop] || this['props'][prop] === default_value) {
+                this['props'][prop] = val;
+              }
+            }, this);
+
+            this.save();
+            return true;
+          }
+          return false;
+        }
+        /**
+         * 移除指定的缓存数据，同时也清除本地的对应数据
+         * @param {string} prop
+         */
+
+      }, {
+        key: 'unregister',
+        value: function unregister(prop) {
+          if (prop in this['props']) {
+            delete this['props'][prop];
+            this.save();
+          }
+        }
+        /**
+         * 设置一个事件计时器，记录用户触发指定事件需要的时间，同时保存到本地
+         * @param {String} event_name 该计时器的名称
+         * @param {Date} timestamp 该计时器开始时间戳
+         */
+
+      }, {
+        key: 'set_event_timer',
+        value: function set_event_timer(event_name, timestamp) {
+          var timers = this['props']['costTime'] || {};
+          timers[event_name] = timestamp;
+          this['props']['costTime'] = timers;
           this.save();
         }
-      }
-      /**
-       * 设置一个事件计时器，记录用户触发指定事件需要的时间，同时保存到本地
-       * @param {String} event_name 该计时器的名称
-       * @param {Date} timestamp 该计时器开始时间戳
-       */
-      set_event_timer(event_name, timestamp) {
-        const timers = this['props']['costTime'] || {};
-        timers[event_name] = timestamp;
-        this['props']['costTime'] = timers;
-        this.save();
-      }
-      /**
-       * 移除指定计时器，同时将本地存储的该计时器信息清除
-       * @param {String} event_name
-       * @returns {Date} 返回移除该计时器的时间戳
-       */
-      remove_event_timer(event_name) {
-        const timers = this['props']['costTime'] || {};
-        const timestamp = timers[event_name];
-        if (!_.isUndefined(timestamp)) {
-          delete this['props']['costTime'][event_name];
-          this.save();
+        /**
+         * 移除指定计时器，同时将本地存储的该计时器信息清除
+         * @param {String} event_name
+         * @returns {Date} 返回移除该计时器的时间戳
+         */
+
+      }, {
+        key: 'remove_event_timer',
+        value: function remove_event_timer(event_name) {
+          var timers = this['props']['costTime'] || {};
+          var timestamp = timers[event_name];
+          if (!_.isUndefined(timestamp)) {
+            delete this['props']['costTime'][event_name];
+            this.save();
+          }
+          return timestamp;
         }
-        return timestamp;
-      }
-    };
+      }]);
+
+      return LOCAL_STORAGE;
+    }();
+
+    ;
 
     function on(obj, event, callFn) {
       if (obj[event]) {
-        const fn = obj[event];
+        var fn = obj[event];
         obj[event] = function () {
-          const args = Array.prototype.slice.call(arguments);
+          var args = Array.prototype.slice.call(arguments);
           callFn.apply(this, args);
           fn.apply(this, args);
         };
       } else {
         obj[event] = function () {
-          const args = Array.prototype.slice.call(arguments);
+          var args = Array.prototype.slice.call(arguments);
           callFn.apply(this, args);
         };
       }
@@ -2228,18 +2389,18 @@
       return location.pathname + location.search;
     }
 
-    const SPA = {
+    var SPA = {
       config: {
         mode: 'hash',
         track_replace_state: false,
-        callback_fn: () => {}
+        callback_fn: function callback_fn() {}
       },
-      init(config) {
+      init: function init(config) {
         this.config = _.extend(this.config, config || {});
         this.path = getPath();
         this.event();
       },
-      event() {
+      event: function event() {
         if (this.config.mode === 'history') {
           if (!history.pushState || !window.addEventListener) return;
           on(history, 'pushState', this.pushStateOverride.bind(this));
@@ -2249,33 +2410,35 @@
           _.register_hash_event(this.handleHashState.bind(this));
         }
       },
-      pushStateOverride() {
+      pushStateOverride: function pushStateOverride() {
         this.handleUrlChange(true);
       },
-      replaceStateOverride() {
+      replaceStateOverride: function replaceStateOverride() {
         this.handleUrlChange(false);
       },
-      handlePopState() {
+      handlePopState: function handlePopState() {
         this.handleUrlChange(true);
       },
-      handleHashState() {
+      handleHashState: function handleHashState() {
         this.handleUrlChange(true);
       },
-      handleUrlChange(historyDidUpdate) {
-        setTimeout(() => {
-          if (this.config.mode === 'hash') {
-            if (_.isFunction(this.config.callback_fn)) {
-              this.config.callback_fn.call();
+      handleUrlChange: function handleUrlChange(historyDidUpdate) {
+        var _this = this;
+
+        setTimeout(function () {
+          if (_this.config.mode === 'hash') {
+            if (_.isFunction(_this.config.callback_fn)) {
+              _this.config.callback_fn.call();
               _.innerEvent.trigger('singlePage:change');
             }
-          } else if (this.config.mode === 'history') {
-            const oldPath = this.path;
-            const newPath = getPath();
-            if (oldPath != newPath && this.shouldTrackUrlChange(newPath, oldPath)) {
-              this.path = newPath;
-              if (historyDidUpdate || this.config.track_replace_state) {
-                if (typeof this.config.callback_fn === 'function') {
-                  this.config.callback_fn.call();
+          } else if (_this.config.mode === 'history') {
+            var oldPath = _this.path;
+            var newPath = getPath();
+            if (oldPath != newPath && _this.shouldTrackUrlChange(newPath, oldPath)) {
+              _this.path = newPath;
+              if (historyDidUpdate || _this.config.track_replace_state) {
+                if (typeof _this.config.callback_fn === 'function') {
+                  _this.config.callback_fn.call();
                   _.innerEvent.trigger('singlePage:change');
                 }
               }
@@ -2283,18 +2446,24 @@
           }
         }, 0);
       },
-      shouldTrackUrlChange(newPath, oldPath) {
+      shouldTrackUrlChange: function shouldTrackUrlChange(newPath, oldPath) {
         return !!(newPath && oldPath);
       }
     };
 
-    class SMARTLib {
+    var _createClass$1 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+    function _classCallCheck$1(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+    var SMARTLib = function () {
       /**
        * 
        * @param {String} token 上报数据凭证
        * @param {Object} config sdk客户端配置
        */
-      constructor(token, config) {
+      function SMARTLib(token, config) {
+        _classCallCheck$1(this, SMARTLib);
+
         this['__loaded'] = true;
         this._ = _;
         this['config'] = {};
@@ -2325,171 +2494,249 @@
         }
       }
       // 单页面应用（影响PV）
-      _SPA() {
-        SPA.init({
-          mode: this._get_config('SPA').mode,
-          callback_fn: () => {}
-        });
-      }
-      /**
-       * 设置配置
-       * @param {Object} config 
-       */
-      _set_config(config) {
-        if (_.isObject(config)) {
-          this['config'] = _.extend(this['config'], config);
-          CONFIG.DEBUG = CONFIG.DEBUG || this._get_config('debug');
-        }
-      }
-      /**
-       * 获取某个配置
-       * @param {String} prop_name
-       * @returns {*} 
-       */
-      _get_config(prop_name) {
-        return this['config'][prop_name];
-      }
-      // sdk初始化之前触发的钩子函数，该方法必须在初始化子模块前以及上报数据前使用
-      _loaded() {
-        try {
-          this._get_config('loaded')(this);
-        } catch (error) {
-          console.error(error);
-        }
-      }
-      /**
-       * 设置本地设备凭证
-       * 若是首次访问（本地无设备凭证），上报用户首次访问网站事件
-       */
-      _set_device_id() {
-        let track_data = {};
-        if (!this.get_device_id()) {
-          this['local_storage'].register_once({ 'deviceId': _.UUID() }, '');
-          track_data = this.track_event('smart_activate');
-        }
-        return track_data;
-      }
 
-      // 获取唯一凭证（设备标记）
-      get_device_id() {
-        return this.get_property('deviceId');
-      }
-      // 获取指定本地存储属性（缓存和本地）
-      get_property(prop_name) {
-        return this['local_storage']['props'][prop_name];
-      }
-      /**
-       * 设置一个指定事件的耗时监听器
-       * @param {String} event_name
-       */
-      time_event(event_name) {
-        this['event'].time_event(event_name);
-      }
-      /**
-       * 发送PV事件，在此之前检测session
-       * @param {Object} properties  pv属性
-       * @param {*} callback 
-       */
-      track_pv(properties, callback) {
-        this['event'].track_pv(properties, callback);
-      }
-      /**
-       * 追踪事件（上报用户事件触发数据）
-       * @param {String} event_name 事件名称（必须）
-       * @param {Object} properties 事件属性
-       * @param {Function} callback 上报后的回调方法
-       * @param {String} event_type 自定义事件类型
-       * @returns {Object} track_data 上报的数据
-       */
-      track_event(event_name, properties, callback, event_type) {
-        this['event'].track(event_name, properties, callback, event_type);
-      }
-      /**
-       * 设置事件自定义通用属性
-       * 成功设置事件通用属性后，再通过 track_event: 追踪事件时，事件通用属性会被添加进每个事件中。
-       * 重复调用 register_event_super_properties: 会覆盖之前已设置的通用属性。
-       */
-      register_event_super_properties(prop, to) {
-        let set_props = {};
-        let super_properties = this.get_property('superProperties');
-        if (_.isObject(prop)) {
-          _.each(prop, (v, k) => {
-            set_props[k] = v;
+
+      _createClass$1(SMARTLib, [{
+        key: '_SPA',
+        value: function _SPA() {
+          SPA.init({
+            mode: this._get_config('SPA').mode,
+            callback_fn: function callback_fn() {}
           });
-        } else {
-          set_props[prop] = to;
         }
-        // 注意合并顺序
-        super_properties = _.extend({}, super_properties, set_props);
-        this['local_storage'].register({
-          superProperties: super_properties
-        });
-      }
-      /**
-       * 设置事件自定义通用属性
-       * 成功设置事件通用属性后，再通过 track_event: 追踪事件时，事件通用属性会被添加进每个事件中。
-       * 不覆盖之前已经设定的通用属性。
-       */
-      register_event_super_properties_once(prop, to) {
-        let set_props = {};
-        let super_properties = this.get_property('superProperties');
-        if (_.isObject(prop)) {
-          _.each(prop, (v, k) => {
-            set_props[k] = v;
-          });
-        } else {
-          set_props[prop] = to;
-        }
-        // 注意合并顺序
-        super_properties = _.extend({}, set_props, super_properties);
-        this['local_storage'].register({
-          superProperties: super_properties
-        });
-      }
-      /**
-       * 删除指定通用事件属性
-       * @param {String} prop_name 
-       */
-      unregister_event_super_properties(prop_name) {
-        if (_.isString(prop_name)) {
-          let super_properties = this.get_property('superProperties');
-          if (_.isObject(super_properties)) {
-            delete super_properties[prop_name];
-            this['local_storage'].register({
-              superProperties: super_properties
-            });
+        /**
+         * 设置配置
+         * @param {Object} config 
+         */
+
+      }, {
+        key: '_set_config',
+        value: function _set_config(config) {
+          if (_.isObject(config)) {
+            this['config'] = _.extend(this['config'], config);
+            CONFIG.DEBUG = CONFIG.DEBUG || this._get_config('debug');
           }
         }
-      }
-      /**
-       * 清除本地已设置的通用事件属性
-       */
-      clear_event_super_properties() {
-        this['local_storage'].register({
-          superProperties: {}
-        });
-      }
-      /**
-       * 查看当前已设置的通用事件属性
-       */
-      current_event_super_properties() {
-        return this.get_property('superProperties');
-      }
-    }
+        /**
+         * 获取某个配置
+         * @param {String} prop_name
+         * @returns {*} 
+         */
 
-    class LoaderSync {
-      constructor() {
+      }, {
+        key: '_get_config',
+        value: function _get_config(prop_name) {
+          return this['config'][prop_name];
+        }
+        // sdk初始化之前触发的钩子函数，该方法必须在初始化子模块前以及上报数据前使用
+
+      }, {
+        key: '_loaded',
+        value: function _loaded() {
+          try {
+            this._get_config('loaded')(this);
+          } catch (error) {
+            console.error(error);
+          }
+        }
+        /**
+         * 设置本地设备凭证
+         * 若是首次访问（本地无设备凭证），上报用户首次访问网站事件
+         */
+
+      }, {
+        key: '_set_device_id',
+        value: function _set_device_id() {
+          var track_data = {};
+          if (!this.get_device_id()) {
+            this['local_storage'].register_once({ 'deviceId': _.UUID() }, '');
+            track_data = this.track_event('smart_activate');
+          }
+          return track_data;
+        }
+
+        // 获取唯一凭证（设备标记）
+
+      }, {
+        key: 'get_device_id',
+        value: function get_device_id() {
+          return this.get_property('deviceId');
+        }
+        // 获取指定本地存储属性（缓存和本地）
+
+      }, {
+        key: 'get_property',
+        value: function get_property(prop_name) {
+          return this['local_storage']['props'][prop_name];
+        }
+        /**
+         * 设置一个指定事件的耗时监听器
+         * @param {String} event_name
+         */
+
+      }, {
+        key: 'time_event',
+        value: function time_event(event_name) {
+          this['event'].time_event(event_name);
+        }
+        /**
+         * 发送PV事件，在此之前检测session
+         * @param {Object} properties  pv属性
+         * @param {*} callback 
+         */
+
+      }, {
+        key: 'track_pv',
+        value: function track_pv(properties, callback) {
+          this['event'].track_pv(properties, callback);
+        }
+        /**
+         * 追踪事件（上报用户事件触发数据）
+         * @param {String} event_name 事件名称（必须）
+         * @param {Object} properties 事件属性
+         * @param {Function} callback 上报后的回调方法
+         * @param {String} event_type 自定义事件类型
+         * @returns {Object} track_data 上报的数据
+         */
+
+      }, {
+        key: 'track_event',
+        value: function track_event(event_name, properties, callback, event_type) {
+          this['event'].track(event_name, properties, callback, event_type);
+        }
+        /**
+         * 设置事件自定义通用属性
+         * 成功设置事件通用属性后，再通过 track_event: 追踪事件时，事件通用属性会被添加进每个事件中。
+         * 重复调用 register_event_super_properties: 会覆盖之前已设置的通用属性。
+         */
+
+      }, {
+        key: 'register_event_super_properties',
+        value: function register_event_super_properties(prop, to) {
+          var set_props = {};
+          var super_properties = this.get_property('superProperties');
+          if (_.isObject(prop)) {
+            _.each(prop, function (v, k) {
+              set_props[k] = v;
+            });
+          } else {
+            set_props[prop] = to;
+          }
+          // 注意合并顺序
+          super_properties = _.extend({}, super_properties, set_props);
+          this['local_storage'].register({
+            superProperties: super_properties
+          });
+        }
+        /**
+         * 设置事件自定义通用属性
+         * 成功设置事件通用属性后，再通过 track_event: 追踪事件时，事件通用属性会被添加进每个事件中。
+         * 不覆盖之前已经设定的通用属性。
+         */
+
+      }, {
+        key: 'register_event_super_properties_once',
+        value: function register_event_super_properties_once(prop, to) {
+          var set_props = {};
+          var super_properties = this.get_property('superProperties');
+          if (_.isObject(prop)) {
+            _.each(prop, function (v, k) {
+              set_props[k] = v;
+            });
+          } else {
+            set_props[prop] = to;
+          }
+          // 注意合并顺序
+          super_properties = _.extend({}, set_props, super_properties);
+          this['local_storage'].register({
+            superProperties: super_properties
+          });
+        }
+        /**
+         * 删除指定通用事件属性
+         * @param {String} prop_name 
+         */
+
+      }, {
+        key: 'unregister_event_super_properties',
+        value: function unregister_event_super_properties(prop_name) {
+          if (_.isString(prop_name)) {
+            var super_properties = this.get_property('superProperties');
+            if (_.isObject(super_properties)) {
+              delete super_properties[prop_name];
+              this['local_storage'].register({
+                superProperties: super_properties
+              });
+            }
+          }
+        }
+        /**
+         * 清除本地已设置的通用事件属性
+         */
+
+      }, {
+        key: 'clear_event_super_properties',
+        value: function clear_event_super_properties() {
+          this['local_storage'].register({
+            superProperties: {}
+          });
+        }
+        /**
+         * 查看当前已设置的通用事件属性
+         */
+
+      }, {
+        key: 'current_event_super_properties',
+        value: function current_event_super_properties() {
+          return this.get_property('superProperties');
+        }
+        /**
+         * 用户登录和注册时调用
+         * @param {String} user_id 
+         */
+
+      }, {
+        key: 'login',
+        value: function login(user_id) {
+          this['event'].login(user_id);
+        }
+        // 清除本地用户信息，退出用户（选则调用）,建议平台网站不必调用（无需匿名用户的平台）
+
+      }, {
+        key: 'logout',
+        value: function logout() {
+          this['event'].logout();
+        }
+      }]);
+
+      return SMARTLib;
+    }();
+
+    var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+    function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
+    var LoaderSync = function () {
+      function LoaderSync() {
+        _classCallCheck(this, LoaderSync);
+
         window['smart'] = this;
       }
-      init(token, config) {
-        if (this['__loaded']) {
-          return;
+
+      _createClass(LoaderSync, [{
+        key: 'init',
+        value: function init(token, config) {
+          if (this['__loaded']) {
+            return;
+          }
+          this.instance = new SMARTLib(token, config);
+          this.instance.init = this['init'];
+          window['smart'] = this.instance;
         }
-        this.instance = new SMARTLib(token, config);
-        this.instance.init = this['init'];
-        window['smart'] = this.instance;
-      }
-    }
+      }]);
+
+      return LoaderSync;
+    }();
 
     new LoaderSync();
 

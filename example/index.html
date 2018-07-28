@@ -48,6 +48,7 @@
   </header>
   <body>
       <div style="clear:both;">
+          <input id="userId" placeholder="请输入用户名称">
           <h1>测试登录</h1>
           <h1>测试退出</h1>
           <h2>测试用户自定义事件</h2>
@@ -56,10 +57,10 @@
 
       <script>
         document.getElementsByTagName('h1')[0].onclick = function(e) {
-          //smart.login(document.getElementById('userId').value);
+          smart.login(document.getElementById('userId').value);
         }
         document.getElementsByTagName('h1')[1].onclick = function(e) {
-          //smart.logout();
+          smart.logout();
         }
         document.getElementsByTagName('h2')[0].onclick = function(e) {
           smart.track_event("buy",{"price":"￥123", "id": 'xxxx-xxxx-xxxx'});

@@ -6,7 +6,9 @@
   "directories": {},
   "scripts": {
     "server": "node ./server",
-    "build": "build.sh"
+    "build": "build.sh",
+    "lint": "jshint .",
+    "validate": "npm ls"
   },
   "devDependencies": {
     "@tensorflow/tfjs": "^0.12.0",
