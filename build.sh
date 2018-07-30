@@ -6,4 +6,4 @@ version=$(cat version)
 
 ./node_modules/.bin/rollup -i loader/loader-sync.js -f iife -o build/$version/smart.sync.js -n smart -c rollup.config.js
 
-#sleep 20
+sleep 2

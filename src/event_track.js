@@ -242,7 +242,7 @@ class EVENT_TRACK {
       attributes: user_set_properties
     };
     // 合并客户端信息
-    data = Object.assign({}, data, _.info.properties());
+    data = _.extend({}, data, _.info.properties());
 
     //只有已访问页面后，sessionReferrer 重置
     //如果不是内置事件，那么 sessionReferrer 重置
