@@ -35,13 +35,7 @@ class SMARTLib {
     // 设置设备凭证
     this._set_device_id();
 
-    // 配置为自动触发PV事件
-    if (this._get_config('pageview')) {
-      this.track_pv();
-    } else {
-      // 若没有自动触发事件，还需检测session
-      this._session();
-    }
+    this._track_pv();
 
     // persistedTime 首次访问应用时间
     this['local_storage'].register_once({'persistedTime': new Date().getTime()}, '');
@@ -50,11 +44,23 @@ class SMARTLib {
       this._SPA();
     }
   }
+  // 内部使用的PV方法
+  _track_pv(properties, callback) {
+    // 配置为自动触发PV事件
+    if (this._get_config('pageview')) {
+      this['event'].track_pv(properties, callback);
+    } else {
+      // 若没有自动触发事件，还需检测session (说明：当触发PV 时，实际已经检测了session)
+      this['event']._session();
+    }
+  }
   // 单页面应用（影响PV）
   _SPA() {
     SPA.init({
       mode: this._get_config('SPA').mode,
-      callback_fn: () => {}
+      callback_fn: () => {
+        this._track_pv();
+      }
     });
   }
   /**

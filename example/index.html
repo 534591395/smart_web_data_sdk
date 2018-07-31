@@ -42,8 +42,27 @@
       smart.init('xxx', {
         local_storage: {
           type: 'localStorage'
+        },
+        SPA: {
+          is: true,
+          mode: 'hash'
+        },
+       // pageview: false,
+        debug: true,
+        loaded: function(sdk) {
+          sdk.register_event_super_properties({test:'事件通用属性'});
         }
       });
+
+
+      // 若关闭了 PV 自动触发，则使用下面的代码
+      // smart.track_pv();
+      // smart._.innerEvent.on('singlePage:change', function(eventName, urlParams) {
+      //   smart.track_pv();
+      //   console.log(urlParams)
+      // });
+
+      smart.time_event('buy');
     </script>
   </header>
   <body>
@@ -53,6 +72,8 @@
           <h1>测试退出</h1>
           <h2>测试用户自定义事件</h2>
           <p>设置用户自定义属性</p>
+          <a href='#22'>单页面1（hash）</a>
+          <a href='#33'>单页面2（hash）</a>
       </div>
 
       <script>

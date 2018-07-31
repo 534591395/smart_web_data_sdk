@@ -32,6 +32,7 @@ const SPA = {
   init(config) {
     this.config = _.extend(this.config, config || {});
     this.path = getPath();
+    this.url= location.href;
     this.event();
   },
   event() {
@@ -61,7 +62,11 @@ const SPA = {
       if(this.config.mode === 'hash') {
         if(_.isFunction(this.config.callback_fn)) {
           this.config.callback_fn.call();
-          _.innerEvent.trigger('singlePage:change');
+          _.innerEvent.trigger('singlePage:change', {
+            oldUrl: this.url,
+            nowUrl: location.href
+          });
+          this.url = location.href;
         }
       } else if( this.config.mode === 'history' ) {
         const oldPath = this.path;
@@ -71,7 +76,11 @@ const SPA = {
           if(historyDidUpdate || this.config.track_replace_state) {
             if(typeof this.config.callback_fn === 'function') {
               this.config.callback_fn.call();
-              _.innerEvent.trigger('singlePage:change');
+              _.innerEvent.trigger('singlePage:change', {
+                oldUrl: this.url,
+                nowUrl: location.href
+              });
+              this.url = location.href;
             }
           }
         }

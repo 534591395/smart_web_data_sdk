@@ -19,7 +19,16 @@ class EVENT_TRACK {
     });
     // 将当前的referrer保存到本地缓存
     this['local_storage'].register({
-      sessionReferrer: window.document.referrer
+      sessionReferrer: document.referrer
+    });
+    
+    let mark_page_url = location.href;
+    // 单页面触发PV事件时，设置 referrer
+    _.innerEvent.on('singlePage:change', (eventName, urlParams) => {
+      this['local_storage'].register({
+        sessionReferrer: mark_page_url
+      });
+      mark_page_url = location.href;
     });
   }
   /**
@@ -279,6 +288,9 @@ class EVENT_TRACK {
     if (_.isNumber(truncateLength) && truncateLength > 0) {
       truncated_data = _.truncate(data, truncateLength);
     }
+    
+    console.log('上报的数据（截取后）:', truncated_data);
+
     const callback_fn = (response) => {
       callback(response, data);
     };

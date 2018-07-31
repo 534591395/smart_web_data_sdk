@@ -3,8 +3,7 @@ import {
 } from './config'
 
 
-// 注意：current-device install后，记得把它的 json 中  "main" 值指向 es6版本  "es/index.js" 
-import device from 'current-device'
+import device from './device'
 
 import {base64Encode} from './coding'
 
@@ -208,6 +207,88 @@ const _ = {
 };
 _.isArray = Array.isArray || function(obj) {
   return Object.prototype.toString.apply(obj) === '[object Array]';
+};
+
+_.register_event = (function() {
+    // written by Dean Edwards, 2005
+    // with input from Tino Zijdel - crisp@xs4all.nl
+    // with input from Carl Sverre - mail@carlsverre.com
+    // with input from DATracker
+    // http://dean.edwards.name/weblog/2005/10/add-event/
+    // https://gist.github.com/1930440
+
+    /**
+     * @param {Object} element
+     * @param {string} type
+     * @param {function(...[*])} handler
+     * @param {boolean=} oldSchool
+     * @param {boolean=} useCapture
+     */
+    var register_event = function(element, type, handler, oldSchool, useCapture) {
+        if (!element) {
+            console.error('No valid element provided to register_event');
+            return;
+        }
+
+        if (element.addEventListener && !oldSchool) {
+            element.addEventListener(type, handler, !!useCapture);
+        } else {
+            var ontype = 'on' + type;
+            var old_handler = element[ontype]; // can be undefined
+            element[ontype] = makeHandler(element, handler, old_handler);
+        }
+    };
+
+    function makeHandler(element, new_handler, old_handlers) {
+        var handler = function(event) {
+            event = event || fixEvent(window.event);
+
+            // this basically happens in firefox whenever another script
+            // overwrites the onload callback and doesn't pass the event
+            // object to previously defined callbacks.  All the browsers
+            // that don't define window.event implement addEventListener
+            // so the dom_loaded handler will still be fired as usual.
+            if (!event) {
+                return undefined;
+            }
+
+            var ret = true;
+            var old_result, new_result;
+
+            if (_.isFunction(old_handlers)) {
+                old_result = old_handlers(event);
+            }
+            new_result = new_handler.call(element, event);
+
+            if ((false === old_result) || (false === new_result)) {
+                ret = false;
+            }
+
+            return ret;
+        };
+
+        return handler;
+    }
+
+    function fixEvent(event) {
+        if (event) {
+            event.preventDefault = fixEvent.preventDefault;
+            event.stopPropagation = fixEvent.stopPropagation;
+        }
+        return event;
+    }
+    fixEvent.preventDefault = function() {
+        this.returnValue = false;
+    };
+    fixEvent.stopPropagation = function() {
+        this.cancelBubble = true;
+    };
+
+    return register_event;
+})();
+
+_.register_hash_event = function(callback) {
+    _.register_event(window,'hashchange',callback);
 };
 
 // 客户端基本属性
@@ -593,7 +674,7 @@ const windowConsole = win.console;
 const console = {
   /** @type {function(...[*])} */
   log: function() {
-      if (Config.DEBUG && !_.isUndefined(windowConsole) && windowConsole) {
+      if (CONFIG.DEBUG && !_.isUndefined(windowConsole) && windowConsole) {
           try {
               windowConsole.log.apply(windowConsole, arguments);
           } catch (err) {
@@ -605,7 +686,7 @@ const console = {
   },
   /** @type {function(...[*])} */
   error: function() {
-      if (Config.DEBUG && !_.isUndefined(windowConsole) && windowConsole) {
+      if (CONFIG.DEBUG && !_.isUndefined(windowConsole) && windowConsole) {
           var args = ['DATracker error:'].concat(_.toArray(arguments));
           try {
               windowConsole.error.apply(windowConsole, args);

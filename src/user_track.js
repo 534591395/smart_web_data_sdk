@@ -55,6 +55,9 @@ class USER_TRACK {
     if (_.isNumber(truncateLength) && truncateLength > 0) {
       truncated_data = _.truncate(data, truncateLength);
     }
+
+    console.log('上报的数据（截取后）:', truncated_data); 
+
     const callback_fn = (response) => {
       callback(response, data);
     };
