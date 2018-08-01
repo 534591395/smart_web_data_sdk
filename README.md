@@ -174,6 +174,71 @@ smart.login('534591395@qq.com');
 
 ```
 
+11. 渠道推广
+
+sdk通过判断url中的指定参数，来确定当前是否是渠道推广。渠道推广信息默认30天后过期。     
+当落地页是推广页时，sdk会自动上报 `smart_ad_click` 事件。
+
+长链示例：
+
+```html
+http://localhost:3300/example/index.html?utm_source=测试2&utm_medium=测试2&utm_campaign=测试&utm_content=&utm_term=&promotional_id=111
+```
+
+当落地页是短链跳转后的地址，sdk通过判断url是否带有`t_re`确定。
+
+短链跳转后的落地页示例：
+
+```html
+http://localhost:3300/example/index.html?utm_source=测试2&utm_medium=测试2&utm_campaign=测试&utm_content=&utm_term=&promotional_id=111&t_re=1
+```
+
+url推广页参数说明（广告地址）：    
+
+| 字段名称 | 类型    |  说明 |
+| --------       | :-----:  | :----: | 
+| utm_source                  | string      |   广告来源(必须字段)     |
+| utm_medium           | string      |  广告媒介(必须字段)    |
+| utm_campaign            | string      |  广告名称(必须字段)           |
+| promotional_id               | string         |     广告id(必须字段) |
+| utm_content               | string         |     广告内容(选填) |
+| utm_term               | string         |     广告关键词(选填)  |
+
+
+12. 上报用户事件通用属性说明
+
+| 字段名称 | 类型    |  说明 |
+| --------       | :-----:  | :----: | 
+| browser                  | string      |   浏览器     |
+| browserVersion           | string      |  浏览器版本    |
+| currentDomain            | string      |  当前访问页面的域名          |
+| currentUrl               | string         |     当前访问页面的url |
+| title               | string         |    当前访问页面的标题   |
+| urlPath               | string         |   当前访问页面的路径   |
+| deviceId               | string         |     本地唯一标记(可理解为设备id)  |
+| deviceOs               | string         |     客户端操作系统  |
+| deviceOsVersion               | string         |     客户端操作系统版本  |
+| devicePlatform               | string         |     客户端平台（桌面、安卓、ios）  |
+| eventId               | string         |     上报事件的id  |
+| dataType               | string         |     事件类型（具体请看 src/config 中的 SYSTEM_EVENT_OBJECT） |
+| language               | string         |     本地客户端语言  |
+| pageOpenScene               | string         |     网页打开场景（浏览器、APP）  |
+| persistedTime               | string         |     用户首次访问网站时间戳  |
+| referrer               | string         |     上一页url（来源页url）  |
+| referringDomain               | string         |     上一页域名（来源页域名）  |
+| screenHeight               | string         |     本地客户端屏幕高度（像素）  |
+| screenWidth               | string         |     本地客户端屏幕宽度（像素）  |
+| sdkType               | string         |     引入的sdk类型(网页：js)  |
+| sdkVersion               | string         |     引入的sdk版本  |
+| sessionUuid               | string         |     当前会话的id  |
+| time               | string         |     当前上报事件用户触发的时间戳  |
+| token               | string         |    上报数据凭证（通过它来归类数据）   |
+| promotionalID               | string         |    渠道推广的广告id（本地若有数据的话）  |
+| utmCampaign               | string         |    渠道推广的广告名称（本地若有数据的话）  |
+| utmMedium               | string         |    渠道推广的广告媒介（本地若有数据的话）  |
+| utmSource               | string         |    渠道推广的广告来源（本地若有数据的话）  |
+| utmContent               | string         |    渠道推广的广告内容（本地若有数据的话）  |
+| utmTerm               | string         |    渠道推广的广告关键词（本地若有数据的话）  |
 
 #### 进度说明
 
