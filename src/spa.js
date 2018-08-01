@@ -32,7 +32,7 @@ const SPA = {
   init(config) {
     this.config = _.extend(this.config, config || {});
     this.path = getPath();
-    this.url= location.href;
+    this.url= document.URL;
     this.event();
   },
   event() {
@@ -64,9 +64,9 @@ const SPA = {
           this.config.callback_fn.call();
           _.innerEvent.trigger('singlePage:change', {
             oldUrl: this.url,
-            nowUrl: location.href
+            nowUrl: document.URL
           });
-          this.url = location.href;
+          this.url = document.URL;
         }
       } else if( this.config.mode === 'history' ) {
         const oldPath = this.path;
@@ -78,9 +78,9 @@ const SPA = {
               this.config.callback_fn.call();
               _.innerEvent.trigger('singlePage:change', {
                 oldUrl: this.url,
-                nowUrl: location.href
+                nowUrl: document.URL
               });
-              this.url = location.href;
+              this.url = document.URL;
             }
           }
         }

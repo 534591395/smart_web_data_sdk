@@ -49,6 +49,9 @@ class USER_TRACK {
       attributes: properties
     };
 
+    // 合并渠道推广信息
+    data = _.extend({}, data, this.instance['channel'].get_channel_params());
+
     // 上报数据对象字段截取
     const truncateLength = this.instance._get_config('truncateLength');
     let truncated_data = data;

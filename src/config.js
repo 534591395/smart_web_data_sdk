@@ -16,7 +16,7 @@ const DEFAULT_CONFIG = {
     //当secure属性设置为true时，cookie只有在https协议下才能上传到服务器，而在http协议下是没法上传的，所以也不会被窃听
     'secure_cookie': false,
     // cookie存储时，跨主域名存储配置
-    'cross_subdomain_cookie': true,
+    'cross_subdomain_cookie': false,
     // cookie方法存储时，配置保存过期时间
     'cookie_expiration': 1000
   },
@@ -108,18 +108,19 @@ const PEOPLE_PROPERTY_ID = 'smart_user_property';
 
 // 渠道推广参数全局配置, 左边sdk内部使用的参数，右边实际url上的参数
 // 若url上推广的参数不一致，请修改对应右边的值（一一对应）
+// 注意：系统暂时未支持自定义配置（TODO）,若要改动，请到文件 src/channel.js 修改。
 const CHANNEL_PARAMS = {
-  // 广告来源
+  // 广告来源(必须字段)
   utm_source: 'utm_source',
-  // 广告媒介
+  // 广告媒介(必须字段)
   utm_medium: 'utm_medium',
-  // 广告名称
+  // 广告名称(必须字段)
   utm_campaign: 'utm_campaign',
-  // 广告内容
+  // 广告内容(选填)
   utm_content: 'utm_content',
-  // 广告关键词
+  // 广告关键词(选填)
   utm_term: 'utm_term',
-  // 广告id（若url上含有该字段，那么sdk会触发广告点击事件）
+  // 广告id(必须字段)
   promotional_id: 'promotional_id'
 };
 

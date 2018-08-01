@@ -22,13 +22,13 @@ class EVENT_TRACK {
       sessionReferrer: document.referrer
     });
     
-    let mark_page_url = location.href;
+    let mark_page_url = document.URL;
     // 单页面触发PV事件时，设置 referrer
     _.innerEvent.on('singlePage:change', (eventName, urlParams) => {
       this['local_storage'].register({
         sessionReferrer: mark_page_url
       });
-      mark_page_url = location.href;
+      mark_page_url = document.URL;
     });
   }
   /**
@@ -250,8 +250,11 @@ class EVENT_TRACK {
       // 事件自定义属性
       attributes: user_set_properties
     };
-    // 合并客户端信息
+    // 合并客户端信息  
     data = _.extend({}, data, _.info.properties());
+
+    // 合并渠道推广信息
+    data = _.extend({}, data, this.instance['channel'].get_channel_params());
 
     //只有已访问页面后，sessionReferrer 重置
     //如果不是内置事件，那么 sessionReferrer 重置
@@ -261,14 +264,14 @@ class EVENT_TRACK {
       // 其它渠道
       if(this._check_channel()) {
         this['local_storage'].register({
-            sessionReferrer: document.location.href
+            sessionReferrer: document.URL
         });
       }
     }
     if(!this.instance._get_config('SPA').is) {
       if( ['smart_activate','smart_session_close'].indexOf(event_name) > 0 ) {
         this['local_storage'].register({
-            sessionReferrer: document.location.href
+            sessionReferrer: document.URL
         });
       }
     }

@@ -38,6 +38,11 @@ class SMARTLib {
     this['channel'] = new CHANNEL(this);
     // 设置设备凭证
     this._set_device_id();
+    
+    // 上报广告点击事件
+    if (this['channel'].check_ad_click()) {
+      this._ad_click();
+    }
 
     this._track_pv();
 
@@ -47,6 +52,10 @@ class SMARTLib {
     if (this._get_config('SPA').is) {
       this._SPA();
     }
+  }
+  // 广告点击事件
+  _ad_click() {
+    this.track_event('smart_ad_click');
   }
   // 内部使用的PV方法
   _track_pv(properties, callback) {

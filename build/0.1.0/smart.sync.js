@@ -19,7 +19,7 @@
       //当secure属性设置为true时，cookie只有在https协议下才能上传到服务器，而在http协议下是没法上传的，所以也不会被窃听
       'secure_cookie': false,
       // cookie存储时，跨主域名存储配置
-      'cross_subdomain_cookie': true,
+      'cross_subdomain_cookie': false,
       // cookie方法存储时，配置保存过期时间
       'cookie_expiration': 1000
     },
@@ -1036,7 +1036,9 @@
               pathname: '',
               href: ''
           },
-          document: {},
+          document: {
+              URL: ''
+          },
           screen: {
               width: '',
               height: ''
@@ -1218,7 +1220,7 @@
       getHost: function getHost(url) {
           var host = '';
           if (!url) {
-              url = win$1.location.href;
+              url = document.URL;
           }
           var regex = /.*\:\/\/([^\/]*).*/;
           var match = url.match(regex);
@@ -1239,6 +1241,21 @@
           } else {
               return decodeURIComponent(results[1]).replace(/\+/g, ' ');
           }
+      },
+
+      // 删除对象中空字段
+      deleteEmptyProperty: function deleteEmptyProperty(obj) {
+          if (!this.isObject(obj)) {
+              return;
+          }
+          for (var key in obj) {
+              if (obj.hasOwnProperty(key)) {
+                  if (obj[key] === null || this.isUndefined(obj[key]) || obj[key] === "") {
+                      delete obj[key];
+                  }
+              }
+          }
+          return obj;
       }
   };
   _.isArray = Array.isArray || function (obj) {
@@ -1391,9 +1408,9 @@
               // 页面路径
               urlPath: win$1.location.pathname || '',
               // 页面url
-              currentUrl: win$1.location.href,
+              currentUrl: document.URL,
               // 域名
-              currentDomain: this.domain(win$1.location.href),
+              currentDomain: this.domain(document.URL),
               // referrer 数据来源
               referrer: win$1.document.referrer,
               // referrer 域名
@@ -1799,6 +1816,9 @@
           attributes: properties
         };
 
+        // 合并渠道推广信息
+        data = _.extend({}, data, this.instance['channel'].get_channel_params());
+
         // 上报数据对象字段截取
         var truncateLength = this.instance._get_config('truncateLength');
         var truncated_data = data;
@@ -1873,13 +1893,13 @@
         sessionReferrer: document.referrer
       });
 
-      var mark_page_url = location.href;
+      var mark_page_url = document.URL;
       // 单页面触发PV事件时，设置 referrer
       _.innerEvent.on('singlePage:change', function (eventName, urlParams) {
         _this['local_storage'].register({
           sessionReferrer: mark_page_url
         });
-        mark_page_url = location.href;
+        mark_page_url = document.URL;
       });
     }
     /**
@@ -2125,8 +2145,11 @@
           // 事件自定义属性
           attributes: user_set_properties
         };
-        // 合并客户端信息
+        // 合并客户端信息  
         data = _.extend({}, data, _.info.properties());
+
+        // 合并渠道推广信息
+        data = _.extend({}, data, this.instance['channel'].get_channel_params());
 
         //只有已访问页面后，sessionReferrer 重置
         //如果不是内置事件，那么 sessionReferrer 重置
@@ -2136,14 +2159,14 @@
           // 其它渠道
           if (this._check_channel()) {
             this['local_storage'].register({
-              sessionReferrer: document.location.href
+              sessionReferrer: document.URL
             });
           }
         }
         if (!this.instance._get_config('SPA').is) {
           if (['smart_activate', 'smart_session_close'].indexOf(event_name) > 0) {
             this['local_storage'].register({
-              sessionReferrer: document.location.href
+              sessionReferrer: document.URL
             });
           }
         }
@@ -2506,7 +2529,7 @@
     init: function init(config) {
       this.config = _.extend(this.config, config || {});
       this.path = getPath();
-      this.url = location.href;
+      this.url = document.URL;
       this.event();
     },
     event: function event() {
@@ -2540,9 +2563,9 @@
             _this.config.callback_fn.call();
             _.innerEvent.trigger('singlePage:change', {
               oldUrl: _this.url,
-              nowUrl: location.href
+              nowUrl: document.URL
             });
-            _this.url = location.href;
+            _this.url = document.URL;
           }
         } else if (_this.config.mode === 'history') {
           var oldPath = _this.path;
@@ -2554,9 +2577,9 @@
                 _this.config.callback_fn.call();
                 _.innerEvent.trigger('singlePage:change', {
                   oldUrl: _this.url,
-                  nowUrl: location.href
+                  nowUrl: document.URL
                 });
-                _this.url = location.href;
+                _this.url = document.URL;
               }
             }
           }
@@ -2579,13 +2602,32 @@
       this.instance = instance;
       // 渠道推广的参数信息
       this.channel_params = {};
+      this.cookie_name = 'smart_' + this.instance._get_config('token') + '_c';
+      this._set_channel_params();
     }
-    // 转变参数
+    // 转变参数(TODO)
 
 
     _createClass$3(CHANNEL, [{
       key: '_change',
       value: function _change() {}
+      // 从url 或 本地cookie 拿取推广信息
+
+    }, {
+      key: '_set_channel_params',
+      value: function _set_channel_params() {
+        // 从url上拿取，此时还需保存到本地cookie
+        if (this._check_chennel()) {
+          this.channel_params = this._url_channel_params();
+          this._save();
+        } else {
+          // 从本地cookie拿取
+          var cookie = _.cookie.get(this.cookie_name);
+          if (cookie) {
+            this.channel_params = _.JSONDecode(cookie);
+          }
+        }
+      }
       // 得到url上推广的参数信息
 
     }, {
@@ -2609,21 +2651,52 @@
       value: function _check_chennel() {
         var params = this._url_channel_params();
         var is_channel = false;
-        if (params.utm_source && params.utm_medium && params.utm_campaign) {
+        if (params.utm_source && params.utm_medium && params.utm_campaign && params.promotional_id) {
           is_channel = true;
         }
         return is_channel;
       }
-      // 保存
+      // 将推广参数值保存到客户端本地的cookie，30天后失效
 
     }, {
       key: '_save',
-      value: function _save() {}
+      value: function _save() {
+        if (this._check_chennel()) {
+          _.cookie.set(this.cookie_name, _.JSONEncode(this.channel_params), 30, this.instance._get_config('local_storage').cross_subdomain_cookie);
+        }
+      }
       // 检测是否要上报广告点击事件
+      // 条件： 1. 必须是渠道推广；2. 必须有 referrer；3. 当前打开的页面url必须是对外推广的url（有短链和长链）, 表现为当前url上的参数无 t_re(turn_redirect) 字段值；
+      // 其它说明：一般情况下对外推广的链接是短链（不一定跟落地页域名一致），但有些渠道不支持，那么只能使用长链（落地页url+ 推广参数）
 
     }, {
       key: 'check_ad_click',
-      value: function check_ad_click() {}
+      value: function check_ad_click() {
+        var is_ad_click = false;
+        var t_re = _.getQueryParam(document.URL, 't_re');
+        if (this._check_chennel()) {
+          if (document.referrer && !t_re) {
+            is_ad_click = true;
+          }
+        }
+        return is_ad_click;
+      }
+      // 返回参数
+
+    }, {
+      key: 'get_channel_params',
+      value: function get_channel_params() {
+        this._set_channel_params();
+        var params = {
+          utmSource: this.channel_params.utm_source,
+          utmMedium: this.channel_params.utm_medium,
+          promotionalID: this.channel_params.promotional_id,
+          utmCampaign: this.channel_params.utm_campaign,
+          utmContent: this.channel_params.utm_content,
+          utmTerm: this.channel_params.utm_term
+        };
+        return _.deleteEmptyProperty(params);
+      }
     }]);
 
     return CHANNEL;
@@ -2658,6 +2731,11 @@
       // 设置设备凭证
       this._set_device_id();
 
+      // 上报广告点击事件
+      if (this['channel'].check_ad_click()) {
+        this._ad_click();
+      }
+
       this._track_pv();
 
       // persistedTime 首次访问应用时间
@@ -2667,10 +2745,17 @@
         this._SPA();
       }
     }
-    // 内部使用的PV方法
+    // 广告点击事件
 
 
     _createClass$4(SMARTLib, [{
+      key: '_ad_click',
+      value: function _ad_click() {
+        this.track_event('smart_ad_click');
+      }
+      // 内部使用的PV方法
+
+    }, {
       key: '_track_pv',
       value: function _track_pv(properties, callback) {
         // 配置为自动触发PV事件

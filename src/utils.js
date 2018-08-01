@@ -21,7 +21,7 @@ if (typeof(window) === 'undefined') {
         href: ''
       },
       document: {
-        
+        URL: ''
       },
       screen: {
         width: '',
@@ -195,7 +195,7 @@ const _ = {
   getHost(url) {
     let host = '';
     if (!url) {
-      url = win.location.href;
+      url = document.URL;
     }
     const regex = /.*\:\/\/([^\/]*).*/;
     const match = url.match(regex);
@@ -215,6 +215,20 @@ const _ = {
     } else {
       return decodeURIComponent(results[1]).replace(/\+/g, ' ');
     }
+  },
+  // 删除对象中空字段
+  deleteEmptyProperty(obj) {
+    if (!this.isObject(obj)) {
+      return;
+    }
+    for (let key in obj) {
+      if (obj.hasOwnProperty(key)) {
+        if (obj[key] === null || this.isUndefined(obj[key]) || obj[key] === "") {
+          delete obj[key];
+        }
+      }
+    }
+    return obj;
   }
 };
 _.isArray = Array.isArray || function(obj) {
@@ -366,9 +380,9 @@ _.info = {
       // 页面路径
       urlPath: win.location.pathname || '',
       // 页面url
-      currentUrl: win.location.href,
+      currentUrl: document.URL,
       // 域名
-      currentDomain: this.domain(win.location.href),
+      currentDomain: this.domain(document.URL),
       // referrer 数据来源
       referrer: win.document.referrer,
       // referrer 域名
