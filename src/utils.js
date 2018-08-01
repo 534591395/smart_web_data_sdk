@@ -203,6 +203,18 @@ const _ = {
       host = match[1];
     }
     return host;
+  },
+  // 获取url上指定参数的值
+  getQueryParam(url, param) {
+    const target = param.replace(/[\[]/, '\\\[').replace(/[\]]/, '\\\]');
+    const regexS = '[\\?&]' + target + '=([^&#]*)';
+    const regex = new RegExp(regexS);
+    const results = regex.exec(url);
+    if (results === null || (results && typeof(results[1]) !== 'string' && results[1].length)) {
+      return '';
+    } else {
+      return decodeURIComponent(results[1]).replace(/\+/g, ' ');
+    }
   }
 };
 _.isArray = Array.isArray || function(obj) {
@@ -288,7 +300,7 @@ _.register_event = (function() {
 })();
 
 _.register_hash_event = function(callback) {
-    _.register_event(window,'hashchange',callback);
+  _.register_event(window,'hashchange',callback);
 };
 
 // 客户端基本属性

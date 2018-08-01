@@ -13,6 +13,8 @@ import EVENT_TRACK from './event_track'
 import LOCAL_STORAGE from './local_storage'
 // 单页面
 import SPA from './spa'
+// 渠道跟踪
+import CHANNEL from './channel'
 
 class SMARTLib {
   /**
@@ -32,6 +34,8 @@ class SMARTLib {
     this['event'] = new EVENT_TRACK(this);
     // 实例化用户对象
     this['user'] = new USER_TRACK(this);
+    // 实例化渠道跟踪对象
+    this['channel'] = new CHANNEL(this);
     // 设置设备凭证
     this._set_device_id();
 

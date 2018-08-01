@@ -1226,6 +1226,19 @@
               host = match[1];
           }
           return host;
+      },
+
+      // 获取url上指定参数的值
+      getQueryParam: function getQueryParam(url, param) {
+          var target = param.replace(/[\[]/, '\\\[').replace(/[\]]/, '\\\]');
+          var regexS = '[\\?&]' + target + '=([^&#]*)';
+          var regex = new RegExp(regexS);
+          var results = regex.exec(url);
+          if (results === null || results && typeof results[1] !== 'string' && results[1].length) {
+              return '';
+          } else {
+              return decodeURIComponent(results[1]).replace(/\+/g, ' ');
+          }
       }
   };
   _.isArray = Array.isArray || function (obj) {
@@ -2559,6 +2572,67 @@
 
   function _classCallCheck$3(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
+  var CHANNEL = function () {
+    function CHANNEL(instance) {
+      _classCallCheck$3(this, CHANNEL);
+
+      this.instance = instance;
+      // 渠道推广的参数信息
+      this.channel_params = {};
+    }
+    // 转变参数
+
+
+    _createClass$3(CHANNEL, [{
+      key: '_change',
+      value: function _change() {}
+      // 得到url上推广的参数信息
+
+    }, {
+      key: '_url_channel_params',
+      value: function _url_channel_params() {
+        var channel_keywords = 'utm_source utm_medium utm_campaign utm_content utm_term promotional_id'.split(' ');
+        var val = '';
+        var params = {};
+        _.each(channel_keywords, function (key) {
+          val = _.getQueryParam(document.URL, key);
+          if (val) {
+            params[key] = val;
+          }
+        });
+        return params;
+      }
+      // 检测是否为渠道推广
+
+    }, {
+      key: '_check_chennel',
+      value: function _check_chennel() {
+        var params = this._url_channel_params();
+        var is_channel = false;
+        if (params.utm_source && params.utm_medium && params.utm_campaign) {
+          is_channel = true;
+        }
+        return is_channel;
+      }
+      // 保存
+
+    }, {
+      key: '_save',
+      value: function _save() {}
+      // 检测是否要上报广告点击事件
+
+    }, {
+      key: 'check_ad_click',
+      value: function check_ad_click() {}
+    }]);
+
+    return CHANNEL;
+  }();
+
+  var _createClass$4 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+
+  function _classCallCheck$4(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+
   var SMARTLib = function () {
     /**
      * 
@@ -2566,7 +2640,7 @@
      * @param {Object} config sdk客户端配置
      */
     function SMARTLib(token, config) {
-      _classCallCheck$3(this, SMARTLib);
+      _classCallCheck$4(this, SMARTLib);
 
       this['__loaded'] = true;
       this._ = _;
@@ -2579,6 +2653,8 @@
       this['event'] = new EVENT_TRACK(this);
       // 实例化用户对象
       this['user'] = new USER_TRACK(this);
+      // 实例化渠道跟踪对象
+      this['channel'] = new CHANNEL(this);
       // 设置设备凭证
       this._set_device_id();
 
@@ -2594,7 +2670,7 @@
     // 内部使用的PV方法
 
 
-    _createClass$3(SMARTLib, [{
+    _createClass$4(SMARTLib, [{
       key: '_track_pv',
       value: function _track_pv(properties, callback) {
         // 配置为自动触发PV事件
@@ -2827,18 +2903,18 @@
     return SMARTLib;
   }();
 
-  var _createClass$4 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
+  var _createClass$5 = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
 
-  function _classCallCheck$4(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
+  function _classCallCheck$5(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
   var LoaderSync = function () {
     function LoaderSync() {
-      _classCallCheck$4(this, LoaderSync);
+      _classCallCheck$5(this, LoaderSync);
 
       window['smart'] = this;
     }
 
-    _createClass$4(LoaderSync, [{
+    _createClass$5(LoaderSync, [{
       key: 'init',
       value: function init(token, config) {
         if (this['__loaded']) {

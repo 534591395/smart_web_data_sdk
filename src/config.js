@@ -106,6 +106,24 @@ const PEOPLE_RESERVED_PROPERTY = ['$deviceUdid', '$toekn'];
 // People类属性事件id，全局唯一
 const PEOPLE_PROPERTY_ID = 'smart_user_property';
 
+// 渠道推广参数全局配置, 左边sdk内部使用的参数，右边实际url上的参数
+// 若url上推广的参数不一致，请修改对应右边的值（一一对应）
+const CHANNEL_PARAMS = {
+  // 广告来源
+  utm_source: 'utm_source',
+  // 广告媒介
+  utm_medium: 'utm_medium',
+  // 广告名称
+  utm_campaign: 'utm_campaign',
+  // 广告内容
+  utm_content: 'utm_content',
+  // 广告关键词
+  utm_term: 'utm_term',
+  // 广告id（若url上含有该字段，那么sdk会触发广告点击事件）
+  promotional_id: 'promotional_id'
+};
+
+
 export {
   CONFIG,
   DEFAULT_CONFIG,
@@ -113,5 +131,6 @@ export {
   BUSSINESS_EVENT_TYPE,
   SYSTEM_EVENT_OBJECT,
   PEOPLE_RESERVED_PROPERTY,
-  PEOPLE_PROPERTY_ID
+  PEOPLE_PROPERTY_ID,
+  CHANNEL_PARAMS
 };
