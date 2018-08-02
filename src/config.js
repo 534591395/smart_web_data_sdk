@@ -36,7 +36,9 @@ const DEFAULT_CONFIG = {
   // 上报数据前，每个字段长度截取配置，默认不截取
   'truncateLength': -1,
   // 会话超时时长，默认30分钟
-  'session_interval_mins': 30
+  'session_interval_mins': 30,
+  // 远程拉取可视化圈选插件地址
+  'auto_visualization_src': 'http://localhost:3300/build/plugins/auto_visualization/main.js'
 };
 
 

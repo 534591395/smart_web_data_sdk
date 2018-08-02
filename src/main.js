@@ -15,6 +15,8 @@ import LOCAL_STORAGE from './local_storage'
 import SPA from './spa'
 // 渠道跟踪
 import CHANNEL from './channel'
+// 远程拉取js文件（插件，具体内容请查看该文件）
+import LOAD_CONTROL_JS from './load_control_js'
 
 class SMARTLib {
   /**
@@ -30,6 +32,8 @@ class SMARTLib {
     this['local_storage'] = new LOCAL_STORAGE(this['config']);
     // 运行钩子函数
     this._loaded();
+    // 实例化拉取远程库对象（按需加载）
+    this['load_control_js'] = new LOAD_CONTROL_JS(this);
     // 实例化事件对象
     this['event'] = new EVENT_TRACK(this);
     // 实例化用户对象

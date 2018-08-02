@@ -235,6 +235,42 @@ _.isArray = Array.isArray || function(obj) {
   return Object.prototype.toString.apply(obj) === '[object Array]';
 };
 
+_.loadScript = function(para) {
+    para = _.extend({
+      success: function() {},
+      error: function() {},
+      appendCall: function(g) {
+        document.getElementsByTagName('head')[0].appendChild(g);
+      }
+    }, para);
+  
+    var g = null;
+    if (para.type === 'css') {
+      g = document.createElement('link');
+      g.rel = 'stylesheet';
+      g.href = para.url;
+    }
+    if (para.type === 'js') {
+      g = document.createElement('script');
+      g.async = 'async';
+      g.setAttribute('charset','UTF-8');
+      g.src = para.url;
+      g.type = 'text/javascript';
+    }
+    g.onload = g.onreadystatechange = function() {
+      if (!this.readyState || this.readyState === 'loaded' || this.readyState === 'complete') {
+        para.success();
+        g.onload = g.onreadystatechange = null;
+      }
+    };
+    g.onerror = function() {
+      para.error();
+      g.onerror = null;
+    };
+    // if iframe
+    para.appendCall(g);  
+};
+
 _.register_event = (function() {
     // written by Dean Edwards, 2005
     // with input from Tino Zijdel - crisp@xs4all.nl
