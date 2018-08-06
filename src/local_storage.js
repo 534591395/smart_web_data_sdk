@@ -141,7 +141,7 @@ class LOCAL_STORAGE {
    */
   register(props, days) {
     if (_.isObject(props)) {
-      this.expire_days = ( typeof days === 'undefined' ) ? this.default_expiry : day;
+      this.expire_days = ( typeof days === 'undefined' ) ? this.default_expiry : days;
       _.extend(this['props'], props);
       this.save();
       return true;
@@ -162,7 +162,7 @@ class LOCAL_STORAGE {
       if (typeof default_value === 'undefined') {
         default_value = 'None';
       }
-      this.expire_days = ( typeof days === 'undefined' ) ? this.default_expiry : day;
+      this.expire_days = ( typeof days === 'undefined' ) ? this.default_expiry : days;
 
       _.each(props, function(val, prop) {
         if (!this['props'][prop] || this['props'][prop] === default_value) {
