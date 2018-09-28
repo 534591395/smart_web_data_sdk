@@ -1,6 +1,11 @@
 ## 介绍
 `smart_web_data_sdk` 是一个智能的web端大数据库，集成了数据采集、A/B 测试、机器学习。      
 
+## 服务端项目地址
+https://github.com/534591395/smart_web_data_sdk
+［点击查看］（https://github.com/534591395/smart_web_data_sdk）
+当前作者正在本地开发调试中
+
 **数据采集**    
 提供了大数据web端的数据采集功能，采集数据方式提供了代码埋点、可视化埋点、热力图，采集的数据类型多量化。    
 
